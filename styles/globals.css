@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "ChiayiCity";
+    src: url("/fonts/ChiayiCity.ttf");
+}
+
+* {
+    font-family: "ChiayiCity", "Noto Sans TC", serif;
+    font-weight: 700;
+}
