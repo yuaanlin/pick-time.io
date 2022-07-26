@@ -11,5 +11,13 @@
   "date_day_short_friday": "Fri",
   "date_day_short_saturday": "Sat",
   "default_website_title": "Pick time with friends",
-  "default_website_description": "A tool that help you pick time with friends."
+  "default_website_description": "A tool that help you pick time with friends.",
+  "created_title": "Let’s schedule！",
+  "created_link_info": "Share this link to your friends to let them pick time for this event.",
+  "event_name_label": "Event Name",
+  "available_dates_label": "Available Dates",
+  "available_time_label": "Available Time",
+  "event_page_title": "You have been invited to join an event \"{{eventTitle}}\"",
+  "welcome": "Welcome",
+  "event_page_welcome": "You have been invited here for"
 }

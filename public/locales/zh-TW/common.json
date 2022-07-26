@@ -11,5 +11,13 @@
   "date_day_short_friday": "五",
   "date_day_short_saturday": "六",
   "default_website_title": "和朋友挑時間吧",
-  "default_website_description": "一款幫助您和朋友選擇時間的工具。"
+  "default_website_description": "一款幫助您和朋友選擇時間的工具。",
+  "created_title": "讓我們開始約時間吧！",
+  "created_link_info": "分享這個網址給你的朋友們，讓他們選擇能夠參加這個活動的時間。",
+  "event_name_label": "活動名稱",
+  "available_dates_label": "可選擇的日期",
+  "available_time_label": "可選擇的時間",
+  "event_page_title": "你已被邀請參加活動「{{eventTitle}}」，馬上選擇時間吧！",
+  "welcome": "歡迎",
+  "event_page_welcome": "你已被邀請參加活動"
 }
