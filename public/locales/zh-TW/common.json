@@ -1,5 +1,13 @@
 {
   "create_event_name_input_label": "你的活動叫什麼名字？",
   "create_event_date_input_label": "哪些日期是可以選擇的？",
-  "create_event_time_input_label": "哪些時間是可以選擇的？"
+  "create_event_time_input_label": "哪些時間是可以選擇的？",
+  "create_event_submit_label": "建立活動",
+  "date_day_short_sunday": "日",
+  "date_day_short_monday": "一",
+  "date_day_short_tuesday": "二",
+  "date_day_short_wednesday": "三",
+  "date_day_short_thursday": "四",
+  "date_day_short_friday": "五",
+  "date_day_short_saturday": "六"
 }

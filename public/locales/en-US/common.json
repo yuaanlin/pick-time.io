@@ -1,5 +1,13 @@
 {
   "create_event_name_input_label": "What is your event called?",
   "create_event_date_input_label": "What dates might work?",
-  "create_event_time_input_label": "At a specific time?"
+  "create_event_time_input_label": "At a specific time?",
+  "create_event_submit_label": "Create",
+  "date_day_short_sunday": "Sun",
+  "date_day_short_monday": "Mon",
+  "date_day_short_tuesday": "Tue",
+  "date_day_short_wednesday": "Wed",
+  "date_day_short_thursday": "Thu",
+  "date_day_short_friday": "Fri",
+  "date_day_short_saturday": "Sat"
 }
