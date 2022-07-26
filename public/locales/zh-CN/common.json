@@ -9,5 +9,7 @@
   "date_day_short_wednesday": "三",
   "date_day_short_thursday": "四",
   "date_day_short_friday": "五",
-  "date_day_short_saturday": "六"
+  "date_day_short_saturday": "六",
+  "default_website_title": "和朋友挑时间吧",
+  "default_website_description": "一个帮助您和朋友挑选时间的工具。"
 }

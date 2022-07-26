@@ -9,5 +9,7 @@
   "date_day_short_wednesday": "Wed",
   "date_day_short_thursday": "Thu",
   "date_day_short_friday": "Fri",
-  "date_day_short_saturday": "Sat"
+  "date_day_short_saturday": "Sat",
+  "default_website_title": "Pick time with friends",
+  "default_website_description": "A tool that help you pick time with friends."
 }
