@@ -1,15 +1,15 @@
 import getServerSidePropsWithEventData
-  from '../../services/getServerSidePropsWithEventData';
-import PageHead from '../../components/PageHead';
-import { parseEventData, SerializedEventData } from '../../models/event';
-import PageContainer from '../../components/PageContainer';
-import Footer from '../../components/Footer';
-import AvailabilityTable from '../../components/AvailabilityTable';
-import { DateTimeRange } from '../../models/DateTimeRange';
-import TopNav from '../../components/TopNav';
-import useSession from '../../hooks/useSession';
-import { parsePick, Pick } from '../../models/Pick';
-import usePickResult from '../../hooks/usePickResult';
+  from '@services/getServerSidePropsWithEventData';
+import useSession from '@hooks/useSession';
+import usePickResult from '@hooks/usePickResult';
+import { DateTimeRange } from '@models/DateTimeRange';
+import { parsePick, Pick } from '@models/Pick';
+import PageHead from '@components/PageHead';
+import PageContainer from '@components/PageContainer';
+import Footer from '@components/Footer';
+import AvailabilityTable from '@components/AvailabilityTable';
+import TopNav from '@components/TopNav';
+import { parseEventData, SerializedEventData } from '@models/event';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import { useRouter } from 'next/router';

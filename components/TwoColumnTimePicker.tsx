@@ -1,5 +1,5 @@
-import { Time, TimeRange } from '../models/time';
-import touchIn from '../utils/touchIn';
+import touchIn from '@utils/touchIn';
+import { Time, TimeRange } from '@models/time';
 import { TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 

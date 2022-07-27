@@ -1,6 +1,6 @@
-import { DateValue } from '../../models/date';
-import { TimeRange } from '../../models/time';
-import getMongo from '../../utils/getMongo';
+import getMongo from '@utils/getMongo';
+import { DateValue } from '@models/date';
+import { TimeRange } from '@models/time';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { customAlphabet } from 'nanoid';
 

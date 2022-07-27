@@ -1,13 +1,13 @@
-import PageHead from '../../components/PageHead';
-import PageContainer from '../../components/PageContainer';
-import { parseEventData, SerializedEventData } from '../../models/event';
-import Footer from '../../components/Footer';
-import TopNav from '../../components/TopNav';
-import AvailabilityTable from '../../components/AvailabilityTable';
+import useSession from '@hooks/useSession';
+import usePickResult from '@hooks/usePickResult';
 import getServerSidePropsWithEventData
-  from '../../services/getServerSidePropsWithEventData';
-import useSession from '../../hooks/useSession';
-import usePickResult from '../../hooks/usePickResult';
+  from '@services/getServerSidePropsWithEventData';
+import { parseEventData, SerializedEventData } from '@models/event';
+import PageHead from '@components/PageHead';
+import PageContainer from '@components/PageContainer';
+import Footer from '@components/Footer';
+import TopNav from '@components/TopNav';
+import AvailabilityTable from '@components/AvailabilityTable';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 

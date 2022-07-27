@@ -1,10 +1,10 @@
-import PageHead from '../../components/PageHead';
-import PageContainer from '../../components/PageContainer';
-import Footer from '../../components/Footer';
-import TopNav from '../../components/TopNav';
-import { parseEventData, SerializedEventData } from '../../models/event';
 import getServerSidePropsWithEventData
-  from '../../services/getServerSidePropsWithEventData';
+  from '@services/getServerSidePropsWithEventData';
+import { parseEventData, SerializedEventData } from '@models/event';
+import PageHead from '@components/PageHead';
+import PageContainer from '@components/PageContainer';
+import Footer from '@components/Footer';
+import TopNav from '@components/TopNav';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';

@@ -1,4 +1,4 @@
-import getMongo from '../utils/getMongo';
+import getMongo from '@utils/getMongo';
 
 async function getEvent(nanoId: string) {
   const mongo = await getMongo();

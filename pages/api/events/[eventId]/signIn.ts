@@ -1,4 +1,4 @@
-import getMongo from '../../../../utils/getMongo';
+import getMongo from '@utils/getMongo';
 import { NextApiHandler } from 'next';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';

@@ -1,6 +1,6 @@
-import { DateTimeRange } from '../../../../models/DateTimeRange';
-import getMongo from '../../../../utils/getMongo';
-import verifyToken from '../../../../utils/verifyToken';
+import { DateTimeRange } from '@models/DateTimeRange';
+import getMongo from '@utils/getMongo';
+import verifyToken from '@utils/verifyToken';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
 

@@ -1,5 +1,5 @@
 import '../styles/globals.css';
-import { SessionContext, SessionContextType } from '../hooks/useSession';
+import { SessionContext, SessionContextType } from '@hooks/useSession';
 import { appWithTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import NProgress from 'nprogress';

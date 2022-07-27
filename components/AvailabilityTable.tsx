@@ -1,6 +1,6 @@
-import { EventData } from '../models/event';
-import { DateTimeRange } from '../models/DateTimeRange';
-import touchIn from '../utils/touchIn';
+import touchIn from '@utils/touchIn';
+import { EventData } from '@models/event';
+import { DateTimeRange } from '@models/DateTimeRange';
 import { useTranslation } from 'next-i18next';
 import { TouchEvent, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';

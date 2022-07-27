@@ -1,11 +1,11 @@
+import useSession, { useUpdateSession } from '@hooks/useSession';
 import getServerSidePropsWithEventData
-  from '../../services/getServerSidePropsWithEventData';
-import { parseEventData, SerializedEventData } from '../../models/event';
-import PageHead from '../../components/PageHead';
-import PageContainer from '../../components/PageContainer';
-import Footer from '../../components/Footer';
-import useSession, { useUpdateSession } from '../../hooks/useSession';
-import TopNav from '../../components/TopNav';
+  from '@services/getServerSidePropsWithEventData';
+import { parseEventData, SerializedEventData } from '@models/event';
+import PageHead from '@components/PageHead';
+import PageContainer from '@components/PageContainer';
+import Footer from '@components/Footer';
+import TopNav from '@components/TopNav';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';

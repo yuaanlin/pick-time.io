@@ -1,6 +1,6 @@
 import useSession from './useSession';
-import { EventPicksResults } from '../models/Pick';
-import { DateTimeRange } from '../models/DateTimeRange';
+import { EventPicksResults } from '@models/Pick';
+import { DateTimeRange } from '@models/DateTimeRange';
 import { useEffect, useState } from 'react';
 import NProgress from 'nprogress';
 

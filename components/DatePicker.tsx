@@ -1,9 +1,9 @@
+import touchIn from '@utils/touchIn';
 import {
   DateValue,
   getDaysInMonth,
   getEmptySlotNumberOfMonth
-} from '../models/date';
-import touchIn from '../utils/touchIn';
+} from '@models/date';
 import { TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'next-i18next';
