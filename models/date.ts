@@ -1,3 +1,12 @@
+export type DayCode =
+  'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+  | 'sunday';
+
 export interface DateValue {
   year: number;
   month: number;
@@ -7,6 +16,7 @@ export interface DateValue {
   equals: (other: DateValue) => boolean;
   earlierThan: (other: DateValue) => boolean;
   laterThan: (other: DateValue) => boolean;
+  getDayCode: () => DayCode;
 }
 
 export function DateValue(year?: number, month?: number,
@@ -41,6 +51,18 @@ export function DateValue(year?: number, month?: number,
         (this.year === other.year && this.month < other.month) ||
         (this.year === other.year && this.month === other.month && this.date <
           other.date);
+    },
+    getDayCode() {
+      const d = new Date(this.year, this.month - 1, this.date);
+      return ([
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday'
+      ] as DayCode[])[d.getDay()];
     }
   };
 }

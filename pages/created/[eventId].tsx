@@ -1,12 +1,11 @@
 import PageHead from '../../components/PageHead';
 import PageContainer from '../../components/PageContainer';
 import Footer from '../../components/Footer';
-import getEvent from '../../services/getEvent';
 import TopNav from '../../components/TopNav';
 import { parseEventData, SerializedEventData } from '../../models/event';
-import { GetServerSideProps } from 'next';
+import getServerSidePropsWithEventData
+  from '../../services/getServerSidePropsWithEventData';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -70,19 +69,4 @@ export default function (props: Props) {
   </div>;
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const eventId = ctx.query.eventId;
-  if (!eventId || typeof eventId !== 'string') return {
-    props: {},
-    redirect: { destination: '/', }
-  };
-  const event = await getEvent(eventId);
-  return {
-    props: {
-      event,
-      ...(await serverSideTranslations(
-        ctx.locale ? ctx.locale : 'en-US',
-        ['common']))
-    }
-  };
-};
+export const getServerSideProps = getServerSidePropsWithEventData;
