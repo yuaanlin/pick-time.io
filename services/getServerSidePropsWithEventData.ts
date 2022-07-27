@@ -8,6 +8,13 @@ const getServerSidePropsWithEventData: GetServerSideProps = async (ctx) => {
     props: {},
     redirect: { destination: '/', }
   };
+  if (eventId.length !== 6) {
+    ctx.res.statusCode = 404;
+    return {
+      props: {},
+      redirect: { destination: '/', }
+    };
+  }
   const event = await getEvent(eventId);
   return {
     props: {

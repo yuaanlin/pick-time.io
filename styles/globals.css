@@ -11,3 +11,16 @@
     font-family: "ChiayiCity", "Noto Sans TC", serif;
     font-weight: 700;
 }
+
+#nprogress > div.spinner {
+    display: none;
+}
+
+#nprogress > div.bar {
+    background: #FFB524 !important;
+    height: 4px;
+}
+
+#nprogress > div > .peg {
+    box-shadow: 0 0 10px #ff5a01, 0 0 5px #FFBB00;
+}

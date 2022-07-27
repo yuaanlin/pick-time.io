@@ -23,7 +23,9 @@ export function parseEventData(e: SerializedEventData): EventData {
     _id: new ObjectId(e._id),
     nanoid: e.nanoid,
     title: e.title,
-    availableDates: e.availableDates.map(d => DateValue().fromString(d)),
+    availableDates: e.availableDates.map(d => DateValue().fromString(d))
+      .sort((a, b) => a.laterThan(b) ? 1 : -1),
     availableTimes: e.availableTimes.map(t => TimeRange().fromString(t))
+      .sort((a, b) => a.laterThan(b) ? 1 : -1)
   };
 }

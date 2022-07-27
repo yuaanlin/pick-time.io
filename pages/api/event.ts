@@ -6,8 +6,6 @@ import { customAlphabet } from 'nanoid';
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
-    case 'GET':
-      return handleGetEvent(req, res);
     case 'POST':
       return handleCreateEvent(req, res);
   }

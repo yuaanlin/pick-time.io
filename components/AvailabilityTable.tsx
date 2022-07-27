@@ -2,19 +2,25 @@ import { EventData } from '../models/event';
 import { DateTimeRange } from '../models/DateTimeRange';
 import touchIn from '../utils/touchIn';
 import { useTranslation } from 'next-i18next';
-import { TouchEvent, useRef, useState } from 'react';
+import { TouchEvent, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';
 
 interface Props {
   event: EventData;
   readonly?: boolean;
+  value?: DateTimeRange[];
+  onChange?: (value: DateTimeRange[]) => void;
+  result?: { name: string, picks: DateTimeRange[] }[];
 }
 
 function AvailabilityTable(props: Props) {
 
   const {
     event,
-    readonly
+    readonly,
+    value,
+    onChange,
+    result
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -23,36 +29,74 @@ function AvailabilityTable(props: Props) {
   const [touchStart, setTouchStart] = useState<DateTimeRange>();
   const [touchEnd, setTouchEnd] = useState<DateTimeRange>();
 
-  function getColor(dtr: DateTimeRange) {
-    if (touchStart && dtr.equals(touchStart)) {
-      return 'bg-[#ffc107]';
-    }
-    if (!touchStart || !touchEnd) {
-      return 'bg-white';
-    }
-    const dtrTime = dtr.timeRange.start;
-    const touchStartTime = touchStart.timeRange.start;
-    const touchEndTime = touchEnd.timeRange.start;
-    if ((dtrTime.laterThan(touchStartTime) &&
-        dtrTime.earlierThan(touchEndTime) ||
-        dtrTime.earlierThan(touchStartTime) &&
-        dtrTime.laterThan(touchEndTime)) ||
-      dtrTime.equals(touchStartTime) || dtrTime.equals(touchEndTime)) {
-      const dtrDate = dtr.date;
-      const touchStartDate = touchStart.date;
-      const touchEndDate = touchEnd.date;
-      if ((dtrDate.laterThan(touchStartDate) &&
-          dtrDate.earlierThan(touchEndDate) ||
-          dtrDate.earlierThan(touchStartDate) &&
-          dtrDate.laterThan(touchEndDate)) ||
-        dtrDate.equals(touchStartDate) ||
-        dtrDate.equals(touchEndDate)) {
-        return 'bg-[#ffc107]';
+  const options = useMemo(() => {
+    if (readonly) return [];
+    let options: DateTimeRange[] = [];
+    event.availableDates.forEach(date => {
+      event.availableTimes.forEach(time => {
+        options.push(DateTimeRange(date, time));
+      });
+    });
+    return options;
+  }, [event]);
+
+  const valueBetweenTouch = useMemo(() => {
+    if (readonly || !touchStart || !touchEnd) return [];
+    return options.filter(dtr => {
+      const dtrTime = dtr.timeRange.start;
+      const touchStartTime = touchStart.timeRange.start;
+      const touchEndTime = touchEnd.timeRange.start;
+      if ((dtrTime.laterThan(touchStartTime) &&
+          dtrTime.earlierThan(touchEndTime) ||
+          dtrTime.earlierThan(touchStartTime) &&
+          dtrTime.laterThan(touchEndTime)) ||
+        dtrTime.equals(touchStartTime) || dtrTime.equals(touchEndTime)) {
+        const dtrDate = dtr.date;
+        const touchStartDate = touchStart.date;
+        const touchEndDate = touchEnd.date;
+        if ((dtrDate.laterThan(touchStartDate) &&
+            dtrDate.earlierThan(touchEndDate) ||
+            dtrDate.earlierThan(touchStartDate) &&
+            dtrDate.laterThan(touchEndDate)) ||
+          dtrDate.equals(touchStartDate) ||
+          dtrDate.equals(touchEndDate)) {
+          return true;
+        }
       }
+    });
+  }, [touchStart, touchEnd]);
+
+  function getColor(dtr: DateTimeRange) {
+    if (readonly) {
+      let count = 0;
+      result?.forEach(pick => {
+        if (pick.picks.find(v => v.equals(dtr))) {
+          count++;
+        }
+      });
+      if (count === 0) return 'bg-white';
+      if (count === 1) return 'bg-[#ffc107]';
+      if (count === 2) return 'bg-[#ff9800]';
+      if (count === 3) return 'bg-[#ff5722]';
+      if (count === 4) return 'bg-[#f44336]';
+      if (count === 5) return 'bg-[#e91e63]';
     }
+    if (touchStart && dtr.equals(touchStart)) {
+      return value?.find(v => v.equals(touchStart))
+        ? 'bg-white'
+        : 'bg-[#ffc107]';
+    }
+    if (touchStart && valueBetweenTouch.find(v => v.equals(dtr))) {
+      return value?.find(v => v.equals(touchStart))
+        ? 'bg-white'
+        : 'bg-[#ffc107]';
+    }
+    if (value && value.find(v => v.equals(dtr)))
+      return 'bg-[#ffc107]';
   }
 
   const handleTouchMove = (e: TouchEvent<HTMLTableElement>) => {
+    if (readonly) return;
     const touch = e.touches[0];
     const containerRight = containerRef.current?.getBoundingClientRect().right;
     const containerLeft = containerRef.current?.getBoundingClientRect().left;
@@ -86,6 +130,23 @@ function AvailabilityTable(props: Props) {
   };
 
   const handleTouchEnd = () => {
+    if (readonly) return;
+    if (!onChange || !value) return;
+    if (!touchStart) return;
+    if (!touchEnd) {
+      if (value.find(a => a.equals(touchStart)))
+        onChange([...value.filter(v => !v.equals(touchStart))]);
+      else onChange([...value, touchStart]);
+      return;
+    }
+    const append = valueBetweenTouch;
+    let v: any = {};
+    value.forEach((t) => v[t.toString()] = true);
+    if (value.find(r => r.equals(touchStart))) append.forEach(
+      (t) => v[t.toString()] = false);
+    else append.forEach((t) => v[t.toString()] = true);
+    onChange(Object.keys(v).filter(t => v[t])
+      .map(t => DateTimeRange().fromString(t)));
     setTouchStart(undefined);
     setTouchEnd(undefined);
   };
@@ -110,14 +171,16 @@ function AvailabilityTable(props: Props) {
           <p className="text-center">
             {t('date_day_short_' + date.getDayCode())}
           </p>
-          <div className="border-2 border-black rounded-lg">
+          <div className="border-2 border-black rounded-lg overflow-hidden">
             {event.availableTimes.map(time => {
               const dtr = DateTimeRange(date, time);
               return <div
                 /* @ts-ignore */
                 value={dtr.toString()}
                 key={dtr.toString()}
-                onTouchStart={() => setTouchStart(dtr)}
+                onTouchStart={() => {
+                  !readonly && setTouchStart(dtr);
+                }}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
                 className={cx(

@@ -19,5 +19,14 @@
   "available_time_label": "Available Time",
   "event_page_title": "You have been invited to join an event \"{{eventTitle}}\"",
   "welcome": "Welcome",
-  "event_page_welcome": "You have been invited here for"
+  "event_page_welcome": "You have been invited here for",
+  "your_availability_label": "Your Availability",
+  "current_availability_label": "Current Availability",
+  "submit_result": "Submit",
+  "schedule_now": "Schedule Now",
+  "username_label": "Name",
+  "password_label": "Password (Optional)",
+  "password_description_label": "Password is use for your later modification.",
+  "result_title": "Well Done!",
+  "result_description": "Your availability has been submitted."
 }

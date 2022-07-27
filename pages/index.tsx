@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
+import NProgress from 'nprogress';
 import type { NextPage } from 'next';
 
 const Home: NextPage = () => {
@@ -23,6 +24,7 @@ const Home: NextPage = () => {
   const [isCreating, setIsCreating] = useState(false);
 
   async function submit() {
+    NProgress.start();
     try {
       if (!title || selectedTime.length === 0 || selectedDate.length === 0)
         return;
@@ -41,6 +43,7 @@ const Home: NextPage = () => {
       console.error(err);
     } finally {
       setIsCreating(false);
+      NProgress.done();
     }
   }
 

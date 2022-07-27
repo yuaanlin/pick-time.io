@@ -19,5 +19,14 @@
   "available_time_label": "可選擇的時間",
   "event_page_title": "你已被邀請參加活動「{{eventTitle}}」，馬上選擇時間吧！",
   "welcome": "歡迎",
-  "event_page_welcome": "你已被邀請參加活動"
+  "event_page_welcome": "你已被邀請參加活動",
+  "your_availability_label": "你有空的時間",
+  "current_availability_label": "大家有空的時間",
+  "submit_result": "提交結果",
+  "schedule_now": "選擇你有空的時間",
+  "username_label": "你的名稱",
+  "password_label": "密碼（選填）",
+  "password_description_label": "如果有輸入密碼，你可以隨時修改提交的結果",
+  "result_title": "做得好！",
+  "result_description": "你可以參加活動的時段已經順利提交了。"
 }
