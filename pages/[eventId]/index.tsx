@@ -7,10 +7,9 @@ import AvailabilityTable from '../../components/AvailabilityTable';
 import getServerSidePropsWithEventData
   from '../../services/getServerSidePropsWithEventData';
 import useSession from '../../hooks/useSession';
-import { parsePick, Pick } from '../../models/Pick';
+import usePickResult from '../../hooks/usePickResult';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
 interface Props {
   event: SerializedEventData;
@@ -22,17 +21,7 @@ export default function (props: Props) {
   const { t } = useTranslation();
   const eventData = parseEventData(event);
   const session = useSession(eventData.nanoid);
-
-  const [result, setResult] = useState<Pick[]>();
-  useEffect(() => {
-    if (session) {
-      fetch(`/api/events/${eventData.nanoid}/pick`,
-        { headers: { Authorization: `Bearer ${session.token}` } })
-        .then(res => res.json())
-        .then(res => setResult(res.map(parsePick)))
-        .catch(err => console.error(err));
-    }
-  }, [session]);
+  const { result } = usePickResult(eventData.nanoid);
 
   return <div>
     <PageHead
@@ -46,7 +35,7 @@ export default function (props: Props) {
       </div>
       <div className="mt-16">
         <p className="mb-8">{t('current_availability_label')}</p>
-        <AvailabilityTable readonly event={eventData}/>
+        <AvailabilityTable readonly event={eventData} result={result}/>
       </div>
       <button
         onClick={async () => {

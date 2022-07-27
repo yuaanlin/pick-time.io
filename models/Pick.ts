@@ -17,6 +17,8 @@ export interface SerializedPick {
   createdAt: string;
 }
 
+export type EventPicksResults = { name: string, picks: DateTimeRange[] }[];
+
 export function parsePick(p: SerializedPick): Pick {
   return {
     _id: new ObjectId(p._id),

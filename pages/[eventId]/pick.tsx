@@ -9,10 +9,12 @@ import { DateTimeRange } from '../../models/DateTimeRange';
 import TopNav from '../../components/TopNav';
 import useSession from '../../hooks/useSession';
 import { parsePick, Pick } from '../../models/Pick';
+import usePickResult from '../../hooks/usePickResult';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import cx from 'classnames';
+import NProgress from 'nprogress';
 
 interface Props {
   event: SerializedEventData;
@@ -27,29 +29,19 @@ function pick(props: Props) {
   const [value, setValue] = useState<DateTimeRange[]>([]);
   const [tab, setTab] = useState<'my' | 'result'>('my');
   const [insertedPick, setInsertedPick] = useState<Pick | null>();
-  const [result, setResult] = useState<{ name: string, picks: DateTimeRange[] }[]>();
-
-  useEffect(() => {
-    if (session) refresh();
-  }, [session]);
-
-  async function refresh() {
-    const res = await fetch(`/api/events/${eventData.nanoid}/pick`,
-      { headers: { Authorization: `Bearer ${session.token}` } });
-    const json = await res.json() as { name: string, picks: string[] }[];
-    setResult(json.map(v => ({
-      ...v,
-      picks: v.picks.map(p => DateTimeRange().fromString(p))
-    })));
-  }
+  const {
+    result,
+    refresh
+  } = usePickResult(eventData.nanoid);
 
   async function submit() {
+    if (!session) {
+      await router.push(`/${eventData.nanoid}/signin`);
+      return;
+    }
+    if (value.length === 0) return;
+    NProgress.start();
     try {
-      if (!session) {
-        await router.push(`/${eventData.nanoid}/signin`);
-        return;
-      }
-      if (value.length === 0) return;
       const res = await fetch(`/api/events/${eventData.nanoid}/pick`,
         {
           method: 'POST',
@@ -61,8 +53,11 @@ function pick(props: Props) {
         });
       const pick = parsePick(await res.json());
       setInsertedPick(pick);
+      await refresh();
     } catch (err) {
       console.error(err);
+    } finally {
+      NProgress.done();
     }
   }
 
