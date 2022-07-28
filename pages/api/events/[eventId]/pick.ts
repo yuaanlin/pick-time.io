@@ -1,6 +1,5 @@
 import { DateTimeRange } from '@models/DateTimeRange';
 import getMongo from '@utils/getMongo';
-import verifyToken from '@utils/verifyToken';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
 
@@ -17,8 +16,6 @@ const pick: NextApiHandler = async (req, res) => {
 };
 
 async function handleGetPicks(req: NextApiRequest, res: NextApiResponse) {
-  verifyToken(req.headers.authorization?.split(' ')[1],
-    req.query.eventId as string);
   const mongo = await getMongo();
   const picks = await mongo.collection('picks').aggregate([
     { $match: { eventId: req.query.eventId } },
