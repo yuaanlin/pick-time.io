@@ -4,6 +4,7 @@ import { DateTimeRange } from '@models/DateTimeRange';
 import { useTranslation } from 'next-i18next';
 import { TouchEvent, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';
+import { TimeRange } from '@models/time';
 
 interface Props {
   event: EventData;
@@ -74,25 +75,23 @@ function AvailabilityTable(props: Props) {
           count++;
         }
       });
-      if (count === 0) return 'bg-white';
-      if (count === 1) return 'bg-[#ffc107]';
-      if (count === 2) return 'bg-[#ff9800]';
-      if (count === 3) return 'bg-[#ff5722]';
-      if (count === 4) return 'bg-[#f44336]';
-      if (count === 5) return 'bg-[#e91e63]';
+      return {
+        backgroundColor: `rgba(255, 193, 7, ${
+          count / (result?.length || 1)})`
+      };
     }
     if (touchStart && dtr.equals(touchStart)) {
       return value?.find(v => v.equals(touchStart))
-        ? 'bg-white'
-        : 'bg-[#ffc107]';
+        ? { backgroundColor: 'white' }
+        : { backgroundColor: '#ffc107' };
     }
     if (touchStart && valueBetweenTouch.find(v => v.equals(dtr))) {
       return value?.find(v => v.equals(touchStart))
-        ? 'bg-white'
-        : 'bg-[#ffc107]';
+        ? { backgroundColor: 'white' }
+        : { backgroundColor: '#ffc107' };
     }
     if (value && value.find(v => v.equals(dtr)))
-      return 'bg-[#ffc107]';
+      return { backgroundColor: '#ffc107' };
   }
 
   const handleTouchMove = (e: TouchEvent<HTMLTableElement>) => {
@@ -114,10 +113,8 @@ function AvailabilityTable(props: Props) {
     const container = containerRef.current;
     if (!container) return;
     let result: DateTimeRange | undefined;
-    container.childNodes.forEach((dateCol: any) => {
-      const col = dateCol as unknown as HTMLDivElement;
-      if (!col.attributes.getNamedItem('value')) return;
-      col.childNodes[2].childNodes.forEach((timeRow: any) => {
+    Array.from(document.getElementsByClassName('date-time-range-option'))
+      .map(timeRow => {
         const row = timeRow as unknown as HTMLDivElement;
         const dtrValue = row.attributes.getNamedItem('value')?.value;
         if (!dtrValue) return;
@@ -126,7 +123,6 @@ function AvailabilityTable(props: Props) {
           result = dtr;
         }
       });
-    });
     if (result) setTouchEnd(result);
   };
 
@@ -152,13 +148,29 @@ function AvailabilityTable(props: Props) {
     setTouchEnd(undefined);
   };
 
+  const mergedTimeRange: TimeRange[][] = [];
+  event.availableTimes.forEach(t => {
+    const f = mergedTimeRange.find(a => a[a.length - 1].end.equals(t.start));
+    if (f) {
+      f.push(t);
+    } else {
+      mergedTimeRange.push([t]);
+    }
+  });
+
   return <div className="flex w-full">
-    <div className="pt-10">
-      {event.availableTimes.map(
-        time => <div
-          key={time.toString()}
-          className="h-12 pr-2">
-          <p>{time.start.toString()}</p>
+    <div className="pt-12">
+      {mergedTimeRange.map((range, i) =>
+        <div key={i} className="mb-4 mr-4">
+          {range.map((t, j) => <>
+            <p key={t.start.toString()} style={{ height: 48 }}>
+              {t.start.toString()}
+            </p>
+            {j === range.length - 1 &&
+              <p key={t.end.toString()} style={{ height: 24 }}>
+                {t.end.toString()}
+              </p>}
+          </>)}
         </div>)}
     </div>
     <div
@@ -174,30 +186,36 @@ function AvailabilityTable(props: Props) {
           <p className="text-center">
             {t('date_day_short_' + date.getDayCode())}
           </p>
-          <div className="border-2 border-black rounded-lg overflow-hidden">
-            {event.availableTimes.map(time => {
-              const dtr = DateTimeRange(date, time);
-              return <div
-                /* @ts-ignore */
-                value={dtr.toString()}
-                key={dtr.toString()}
-                onTouchStart={() => {
-                  !readonly && setTouchStart(dtr);
-                }}
-                onMouseDown={() => {
-                  !readonly && setTouchStart(dtr);
-                }}
-                onTouchMove={handleTouchMove}
-                onMouseMove={handleMove}
-                onTouchEnd={handleTouchEnd}
-                onMouseUp={handleTouchEnd}
-                className={cx(
-                  'h-12 border-b border-black border-opacity-30 w-24',
-                  !readonly && 'touch-none select-none',
-                  getColor(dtr))}>
-              </div>;
-            })}
-          </div>
+          {mergedTimeRange.map((range, i) =>
+            <div
+              style={{ height: 48 * range.length + 24 }}
+              key={i}
+              className="flex flex-col border-2 border-black rounded-lg
+               overflow-hidden mb-4">
+              {range.map(time => {
+                const dtr = DateTimeRange(date, time);
+                return <div
+                  /* @ts-ignore */
+                  value={dtr.toString()}
+                  key={dtr.toString()}
+                  onTouchStart={() => {
+                    !readonly && setTouchStart(dtr);
+                  }}
+                  onMouseDown={() => {
+                    !readonly && setTouchStart(dtr);
+                  }}
+                  onTouchMove={handleTouchMove}
+                  onMouseMove={handleMove}
+                  onTouchEnd={handleTouchEnd}
+                  onMouseUp={handleTouchEnd}
+                  style={getColor(dtr)}
+                  className={cx('date-time-range-option',
+                    'flex-1 border-b border-black border-opacity-30 w-24',
+                    !readonly && 'touch-none select-none')}>
+                </div>;
+              })}
+            </div>
+          )}
         </div>)}
     </div>
   </div>;
