@@ -4,8 +4,9 @@ import { MouseEventHandler, TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 
 interface Props {
-  value: TimeRange[];
-  onChange: (v: TimeRange[]) => void;
+  value?: TimeRange[];
+  onChange?: (v: TimeRange[]) => void;
+  readonly?: boolean;
 }
 
 function TwoColumnTimePicker(props: Props) {
@@ -17,6 +18,7 @@ function TwoColumnTimePicker(props: Props) {
   const {
     value,
     onChange,
+    readonly
   } = props;
   const leftContainerRef = useRef<HTMLDivElement>(null);
   const rightContainerRef = useRef<HTMLDivElement>(null);
@@ -28,10 +30,10 @@ function TwoColumnTimePicker(props: Props) {
       (opt.laterThan(touchStart) && opt.earlierThan(touchEnd) ||
         opt.earlierThan(touchStart) && opt.laterThan(touchEnd) ||
         opt.equals(touchStart) || opt.equals(touchEnd))) {
-      if (value.find(r => r.equals(touchStart))) return 'bg-white';
+      if (value?.find(r => r.equals(touchStart))) return 'bg-white';
       return 'bg-[#FFB524]';
     }
-    if (value.find(r => r.equals(opt))) return 'bg-[#FFB524]';
+    if (value?.find(r => r.equals(opt))) return 'bg-[#FFB524]';
     return '';
   }
 
@@ -83,11 +85,11 @@ function TwoColumnTimePicker(props: Props) {
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart) return;
+    if (!touchStart || readonly || !onChange) return;
     if (!touchEnd) {
-      if (value.find(a => a.equals(touchStart)))
+      if (value?.find(a => a.equals(touchStart)))
         onChange([...value.filter(v => !v.equals(touchStart))]);
-      else onChange([...value, touchStart]);
+      else onChange([...(value || []), touchStart]);
       return;
     }
     const s = touchStart.laterThan(touchEnd) ? touchEnd : touchStart;
@@ -96,8 +98,8 @@ function TwoColumnTimePicker(props: Props) {
       opt => opt.equals(s) || opt.equals(e) ||
         (opt.laterThan(s) && opt.earlierThan(e)));
     let v: any = {};
-    value.forEach((t) => v[t.toString()] = true);
-    if (value.find(r => r.equals(touchStart))) append.forEach(
+    value?.forEach((t) => v[t.toString()] = true);
+    if (value?.find(r => r.equals(touchStart))) append.forEach(
       (t) => v[t.toString()] = false);
     else append.forEach((t) => v[t.toString()] = true);
     onChange(Object.keys(v).filter(t => v[t])
@@ -118,8 +120,8 @@ function TwoColumnTimePicker(props: Props) {
       <div
         ref={leftContainerRef}
         className="border-4 border-black rounded-3xl overflow-hidden w-full">
-        {leftTimeOptions.map((opt, i) => <div
-          key={i}
+        {leftTimeOptions.map((opt) => <div
+          key={opt.toString()}
           style={{ height: 36 }}
           /* @ts-ignore */
           value={opt.toString()}
@@ -127,8 +129,8 @@ function TwoColumnTimePicker(props: Props) {
             'w-full border-b-2 border-opacity-30 border-black',
             'touch-none select-none',
             getColor(opt))}
-          onTouchStart={() => setTouchStart(opt)}
-          onMouseDown={() => setTouchStart(opt)}
+          onTouchStart={() => !readonly && setTouchStart(opt)}
+          onMouseDown={() => !readonly && setTouchStart(opt)}
           onTouchMove={handleTouchMove}
           onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
@@ -141,7 +143,7 @@ function TwoColumnTimePicker(props: Props) {
         ref={rightContainerRef}
         className="border-4 border-black rounded-3xl overflow-hidden w-full">
         {rightTimeOptions.map((opt, i) => <div
-          key={i}
+          key={opt.toString()}
           style={{ height: 36 }}
           /* @ts-ignore */
           value={opt.toString()}
@@ -149,8 +151,8 @@ function TwoColumnTimePicker(props: Props) {
             'w-full border-b-2 border-opacity-30 border-black',
             'touch-none select-none',
             getColor(opt))}
-          onTouchStart={() => setTouchStart(opt)}
-          onMouseDown={() => setTouchStart(opt)}
+          onTouchStart={() => !readonly && setTouchStart(opt)}
+          onMouseDown={() => !readonly && setTouchStart(opt)}
           onTouchMove={handleTouchMove}
           onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
@@ -166,7 +168,6 @@ function TwoColumnTimePicker(props: Props) {
       <p>24:00</p>
     </div>
   </div>;
-
 }
 
 function getOptions(start: Time, end: Time, duration: 30 | 60) {

@@ -17,6 +17,7 @@ export interface DateValue {
   earlierThan: (other: DateValue) => boolean;
   laterThan: (other: DateValue) => boolean;
   getDayCode: () => DayCode;
+  addMonth: (n: number) => DateValue;
 }
 
 export function DateValue(year?: number, month?: number,
@@ -63,6 +64,12 @@ export function DateValue(year?: number, month?: number,
         'saturday',
         'sunday'
       ] as DayCode[])[d.getDay()];
+    },
+    addMonth(n) {
+      if (this.month + n > 12) {
+        return DateValue(this.year + 1, this.month + n - 12, this.date);
+      }
+      return DateValue(this.year, this.month + n, this.date);
     }
   };
 }

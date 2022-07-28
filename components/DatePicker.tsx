@@ -4,13 +4,14 @@ import {
   getDaysInMonth,
   getEmptySlotNumberOfMonth
 } from '@models/date';
-import { MouseEventHandler, TouchEventHandler, useRef, useState } from 'react';
+import { TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'next-i18next';
 
 interface Props {
-  value: DateValue[];
-  onChange: (v: DateValue[]) => void;
+  value?: DateValue[];
+  onChange?: (v: DateValue[]) => void;
+  readonly?: boolean;
 }
 
 const daysCode = [
@@ -26,12 +27,15 @@ const daysCode = [
 function DatePicker(props: Props) {
   const {
     value,
-    onChange
+    onChange,
+    readonly
   } = props;
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [currYear, setCurrYear] = useState(new Date().getFullYear());
   const [currMonth, setCurrMonth] = useState(new Date().getMonth() + 1);
+  const today = DateValue(new Date().getFullYear(), new Date().getMonth() + 1,
+    new Date().getDate());
 
   const [touchStart, setTouchStart] = useState<DateValue>();
   const [touchEnd, setTouchEnd] = useState<DateValue>();
@@ -62,16 +66,18 @@ function DatePicker(props: Props) {
   }
 
   function getColor(d: DateValue) {
+    if (d.earlierThan(today)) return 'opacity-50';
+
     if (touchStart && touchEnd) {
       if (d.laterThan(touchStart) && d.earlierThan(touchEnd) ||
         d.laterThan(touchEnd) && d.earlierThan(touchStart) ||
         d.equals(touchStart) || d.equals(touchEnd)) {
-        if (value.find(r => r.equals(touchStart))) return 'border-black';
+        if (value?.find(r => r.equals(touchStart))) return 'border-black';
         return 'border-[#FFB524] text-[#FFB524]';
       }
     }
 
-    if (value.find(v => v.equals(d)))
+    if (value?.find(v => v.equals(d)))
       return 'border-[#FFB524] text-[#FFB524]';
 
     return 'border-black';
@@ -79,10 +85,6 @@ function DatePicker(props: Props) {
 
   const handleTouchMove: TouchEventHandler<HTMLDivElement> = (e) => {
     handleMove(e.touches[0]);
-  };
-
-  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
-    if (touchStart) handleMove(e);
   };
 
   const handleMove = (touch: { clientX: number, clientY: number }) => {
@@ -113,21 +115,21 @@ function DatePicker(props: Props) {
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart) return;
+    if (!touchStart || !onChange) return;
     if (!touchEnd) {
-      if (value.find(a => a.equals(touchStart)))
+      if (value?.find(a => a.equals(touchStart)))
         onChange([...value.filter(v => !v.equals(touchStart))]);
-      else onChange([...value, touchStart]);
+      else onChange([...(value || []), touchStart]);
       return;
     }
     const s = touchStart.laterThan(touchEnd) ? touchEnd : touchStart;
     const e = touchStart.earlierThan(touchEnd) ? touchEnd : touchStart;
     const append = days.filter(
-      opt => opt.equals(s) || opt.equals(e) ||
-        (opt.laterThan(s) && opt.earlierThan(e)));
+      opt => !opt.earlierThan(today) && (opt.equals(s) || opt.equals(e) ||
+        (opt.laterThan(s) && opt.earlierThan(e))));
     let v: any = {};
-    value.forEach((t) => v[t.toString()] = true);
-    if (value.find(r => r.equals(touchStart))) append.forEach(
+    value?.forEach((t) => v[t.toString()] = true);
+    if (value?.find(r => r.equals(touchStart))) append.forEach(
       (t) => v[t.toString()] = false);
     else append.forEach((t) => v[t.toString()] = true);
     onChange(Object.keys(v).filter(t => v[t])
@@ -136,14 +138,23 @@ function DatePicker(props: Props) {
     setTouchEnd(undefined);
   };
 
-  return <div className="w-full">
+  return <div className="w-full select-none">
     <div className="flex">
-      {(currYear !== new Date().getFullYear() || currMonth !==
-        new Date().getMonth() + 1) && <p onClick={prevMonth}>{'<'}</p>}
+      {(!DateValue(currYear, currMonth, today.date).equals(today)) &&
+        <p
+          onClick={prevMonth}
+          className="select-none cursor-pointer"
+        >{'<'}</p>}
       <p className="text-center flex-grow">
         {currMonth} {currYear}
       </p>
-      <p onClick={nextMonth}>{'>'}</p>
+      {(!readonly || value?.find(v => v.laterThan(DateValue(currYear,
+        currMonth, 1).addMonth(1)))) &&
+          <p
+            onClick={nextMonth}
+            className="select-none cursor-pointer">
+            {'>'}
+          </p>}
     </div>
     <div className="grid-cols-7 grid">
       {daysCode.map(d => <p key={d} className="text-center my-4">
@@ -156,10 +167,10 @@ function DatePicker(props: Props) {
         key={d.toString()}
         /* @ts-ignore */
         value={d.toString()}
-        onTouchStart={() => setTouchStart(d)}
-        onMouseDown={() => setTouchStart(d)}
+        onTouchStart={() => !readonly && setTouchStart(d)}
+        onMouseDown={() => !readonly && setTouchStart(d)}
         onTouchMove={handleTouchMove}
-        onMouseMove={handleMouseMove}
+        onMouseMove={handleMove}
         onTouchEnd={handleTouchEnd}
         onMouseUp={handleTouchEnd}
         className={cx('border-2 rounded-full w-10 h-10 ',

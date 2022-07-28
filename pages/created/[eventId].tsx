@@ -8,6 +8,8 @@ import TopNav from '@components/TopNav';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import DatePicker from '@components/DatePicker';
+import TwoColumnTimePicker from '@components/TwoColumnTimePicker';
 
 interface Props {
   event: SerializedEventData;
@@ -64,6 +66,20 @@ export default function (props: Props) {
           {eventData.title}
         </p>
       </div>
+
+      <div className="mt-16 ">
+        <p className="text-2xl mb-12 font-bold">
+          {t('available_dates_label')}
+        </p>
+        <DatePicker readonly value={eventData.availableDates}/>
+      </div>
+
+      <div className="mt-16">
+        <p className="text-2xl mb-12 font-bold">
+          {t('available_time_label')}
+        </p>
+      </div>
+      <TwoColumnTimePicker readonly value={eventData.availableTimes}/>
     </PageContainer>
     <Footer/>
   </div>;
