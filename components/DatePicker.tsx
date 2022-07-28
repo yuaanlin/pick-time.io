@@ -4,7 +4,7 @@ import {
   getDaysInMonth,
   getEmptySlotNumberOfMonth
 } from '@models/date';
-import { TouchEventHandler, useRef, useState } from 'react';
+import { MouseEventHandler, TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'next-i18next';
 
@@ -78,7 +78,14 @@ function DatePicker(props: Props) {
   }
 
   const handleTouchMove: TouchEventHandler<HTMLDivElement> = (e) => {
-    const touch = e.touches[0];
+    handleMove(e.touches[0]);
+  };
+
+  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
+    if (touchStart) handleMove(e);
+  };
+
+  const handleMove = (touch: { clientX: number, clientY: number }) => {
     if (touch.clientY > window.innerHeight - 100) {
       window.scrollTo({
         top: window.scrollY + 20,
@@ -150,10 +157,13 @@ function DatePicker(props: Props) {
         /* @ts-ignore */
         value={d.toString()}
         onTouchStart={() => setTouchStart(d)}
+        onMouseDown={() => setTouchStart(d)}
         onTouchMove={handleTouchMove}
+        onMouseMove={handleMouseMove}
         onTouchEnd={handleTouchEnd}
+        onMouseUp={handleTouchEnd}
         className={cx('border-2 rounded-full w-10 h-10 ',
-          'flex items-center justify-center m-2',
+          'flex items-center justify-center m-2 select-none',
           'touch-none',
           getColor(d))}>
         {d.date > 9 ? d.date : '0' + d.date}

@@ -96,8 +96,11 @@ function AvailabilityTable(props: Props) {
   }
 
   const handleTouchMove = (e: TouchEvent<HTMLTableElement>) => {
+    return handleMove(e.touches[0]);
+  };
+
+  const handleMove = (touch: { clientX: number, clientY: number }) => {
     if (readonly) return;
-    const touch = e.touches[0];
     const containerRight = containerRef.current?.getBoundingClientRect().right;
     const containerLeft = containerRef.current?.getBoundingClientRect().left;
     const containerScrollLeft = containerRef.current?.scrollLeft;
@@ -124,9 +127,7 @@ function AvailabilityTable(props: Props) {
         }
       });
     });
-    if (result) {
-      setTouchEnd(result);
-    }
+    if (result) setTouchEnd(result);
   };
 
   const handleTouchEnd = () => {
@@ -160,7 +161,9 @@ function AvailabilityTable(props: Props) {
           <p>{time.start.toString()}</p>
         </div>)}
     </div>
-    <div className="flex flex-grow overflow-x-scroll pb-12" ref={containerRef}>
+    <div
+      className="flex flex-grow overflow-x-scroll pb-12 select-none"
+      ref={containerRef}>
       {event.availableDates.map(date =>
         <div
           /* @ts-ignore */
@@ -181,11 +184,16 @@ function AvailabilityTable(props: Props) {
                 onTouchStart={() => {
                   !readonly && setTouchStart(dtr);
                 }}
+                onMouseDown={() => {
+                  !readonly && setTouchStart(dtr);
+                }}
                 onTouchMove={handleTouchMove}
+                onMouseMove={handleMove}
                 onTouchEnd={handleTouchEnd}
+                onMouseUp={handleTouchEnd}
                 className={cx(
                   'h-12 border-b border-black border-opacity-30 w-24',
-                  !readonly && 'touch-none',
+                  !readonly && 'touch-none select-none',
                   getColor(dtr))}>
               </div>;
             })}

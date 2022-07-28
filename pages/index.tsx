@@ -24,6 +24,7 @@ const Home: NextPage = () => {
   const [isCreating, setIsCreating] = useState(false);
 
   async function submit() {
+    setIsCreating(true);
     NProgress.start();
     try {
       if (!title || selectedTime.length === 0 || selectedDate.length === 0)
@@ -77,6 +78,7 @@ const Home: NextPage = () => {
         </div>
         <TwoColumnTimePicker value={selectedTime} onChange={setSelectedTime}/>
         <button
+          disabled={isCreating}
           onClick={submit}
           className="fixed bottom-8 right-8 bg-zinc-300 items-center
         px-4 py-2 rounded-lg flex z-50 shadow-lg">

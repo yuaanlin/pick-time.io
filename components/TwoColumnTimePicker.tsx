@@ -1,6 +1,6 @@
 import touchIn from '@utils/touchIn';
 import { Time, TimeRange } from '@models/time';
-import { TouchEventHandler, useRef, useState } from 'react';
+import { MouseEventHandler, TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 
 interface Props {
@@ -36,7 +36,14 @@ function TwoColumnTimePicker(props: Props) {
   }
 
   const handleTouchMove: TouchEventHandler<HTMLDivElement> = (e) => {
-    const touch = e.touches[0];
+    return handleMove(e.touches[0]);
+  };
+
+  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
+    return touchStart && handleMove(e);
+  };
+
+  const handleMove = (touch: { clientX: number, clientY: number }) => {
     if (touch.clientY > window.innerHeight - 100) {
       window.scrollTo({
         top: window.scrollY + 20,
@@ -105,6 +112,7 @@ function TwoColumnTimePicker(props: Props) {
         (opt) => <p key={opt.toString()} style={{ height: 36 }}>
           {opt.start.toString()}
         </p>)}
+      <p>12:00</p>
     </div>
     <div className="flex-grow">
       <div
@@ -116,11 +124,15 @@ function TwoColumnTimePicker(props: Props) {
           /* @ts-ignore */
           value={opt.toString()}
           className={cx(
-            'w-full border-b-2 border-opacity-30 border-black touch-none',
+            'w-full border-b-2 border-opacity-30 border-black',
+            'touch-none select-none',
             getColor(opt))}
           onTouchStart={() => setTouchStart(opt)}
+          onMouseDown={() => setTouchStart(opt)}
           onTouchMove={handleTouchMove}
+          onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
+          onMouseUp={handleTouchEnd}
         />)}
       </div>
     </div>
@@ -134,11 +146,15 @@ function TwoColumnTimePicker(props: Props) {
           /* @ts-ignore */
           value={opt.toString()}
           className={cx(
-            'w-full border-b-2 border-opacity-30 border-black touch-none',
+            'w-full border-b-2 border-opacity-30 border-black',
+            'touch-none select-none',
             getColor(opt))}
           onTouchStart={() => setTouchStart(opt)}
+          onMouseDown={() => setTouchStart(opt)}
           onTouchMove={handleTouchMove}
+          onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
+          onMouseUp={handleTouchEnd}
         />)}
       </div>
     </div>
@@ -147,6 +163,7 @@ function TwoColumnTimePicker(props: Props) {
         (opt) => <p key={opt.toString()} style={{ height: 36 }}>
           {opt.start.toString()}
         </p>)}
+      <p>24:00</p>
     </div>
   </div>;
 
