@@ -56,13 +56,13 @@ export function DateValue(year?: number, month?: number,
     getDayCode() {
       const d = new Date(this.year, this.month - 1, this.date);
       return ([
+        'sunday',
         'monday',
         'tuesday',
         'wednesday',
         'thursday',
         'friday',
         'saturday',
-        'sunday'
       ] as DayCode[])[d.getDay()];
     },
     addMonth(n) {
