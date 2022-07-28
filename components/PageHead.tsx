@@ -18,9 +18,10 @@ function PageHead(props: Props) {
   } = props;
 
   const { t } = useTranslation();
+  const titleValue = title || t('default_website_title') + ' - PICKTIME';
 
   return <Head>
-    <title>{title || t('default_website_title')} - PICKTIME</title>
+    <title>{titleValue}</title>
     <meta
       name="description"
       content={description || t('default_website_description')}/>
