@@ -7,12 +7,9 @@ import TopNav from '@components/TopNav';
 import AvailabilityTable from '@components/AvailabilityTable';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { GetStaticProps } from 'next';
-import getEvent from '@services/getEvent';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import getPicks from '@services/getPicks';
 import { DateTimeRange } from '@models/DateTimeRange';
 import { EventResult, SerializedEventResult } from '@models/Pick';
+import { getEvnetAndResultProps } from '@services/getEventProps';
 
 interface Props {
   event: SerializedEventData;
@@ -59,32 +56,9 @@ export default function (props: Props) {
   </div>;
 }
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: 'blocking'
-  };
-}
+export const getStaticPaths = () => ({
+  paths: [],
+  fallback: 'blocking'
+});
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
-  const eventId = ctx.params?.eventId;
-  if (!eventId || typeof eventId !== 'string') return {
-    props: {},
-    redirect: { destination: '/', }
-  };
-  if (eventId.length !== 6) {
-    return { notFound: true, };
-  }
-  const event = await getEvent(eventId);
-  const results = await getPicks(eventId);
-  return {
-    revalidate: 1,
-    props: {
-      results,
-      event,
-      ...(await serverSideTranslations(
-        ctx.locale ? ctx.locale : 'en-US',
-        ['common']))
-    }
-  };
-};
+export const getStaticProps = getEvnetAndResultProps;

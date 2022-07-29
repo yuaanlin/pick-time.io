@@ -1,6 +1,4 @@
 import useSession, { useUpdateSession } from '@hooks/useSession';
-import getServerSidePropsWithEventData
-  from '@services/getServerSidePropsWithEventData';
 import { parseEventData, SerializedEventData } from '@models/event';
 import PageHead from '@components/PageHead';
 import PageContainer from '@components/PageContainer';
@@ -9,6 +7,7 @@ import TopNav from '@components/TopNav';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { getEventProps } from '@services/getEventProps';
 
 interface Props {
   event: SerializedEventData;
@@ -81,4 +80,9 @@ function signIn(props: Props) {
 
 export default signIn;
 
-export const getServerSideProps = getServerSidePropsWithEventData;
+export const getStaticPaths = () => ({
+  paths: [],
+  fallback: 'blocking'
+});
+
+export const getStaticProps = getEventProps;

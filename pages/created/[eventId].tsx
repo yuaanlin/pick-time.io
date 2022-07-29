@@ -1,5 +1,3 @@
-import getServerSidePropsWithEventData
-  from '@services/getServerSidePropsWithEventData';
 import { parseEventData, SerializedEventData } from '@models/event';
 import PageHead from '@components/PageHead';
 import PageContainer from '@components/PageContainer';
@@ -10,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import DatePicker from '@components/DatePicker';
 import TwoColumnTimePicker from '@components/TwoColumnTimePicker';
+import { getEventProps } from '@services/getEventProps';
 
 interface Props {
   event: SerializedEventData;
@@ -85,4 +84,9 @@ export default function (props: Props) {
   </div>;
 }
 
-export const getServerSideProps = getServerSidePropsWithEventData;
+export const getStaticPaths = () => ({
+  paths: [],
+  fallback: 'blocking'
+});
+
+export const getStaticProps = getEventProps;
