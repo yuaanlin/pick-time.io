@@ -1,9 +1,11 @@
-import getServerSidePropsWithEventData
-  from '@services/getServerSidePropsWithEventData';
 import useSession from '@hooks/useSession';
-import usePickResult from '@hooks/usePickResult';
 import { DateTimeRange } from '@models/DateTimeRange';
-import { parsePick, Pick } from '@models/Pick';
+import {
+  EventResult,
+  parsePick,
+  Pick,
+  SerializedEventResult
+} from '@models/Pick';
 import PageHead from '@components/PageHead';
 import PageContainer from '@components/PageContainer';
 import Footer from '@components/Footer';
@@ -15,24 +17,29 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import cx from 'classnames';
 import NProgress from 'nprogress';
+import getEvent from '@services/getEvent';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticProps } from 'next';
+import getPicks from '@services/getPicks';
 
 interface Props {
   event: SerializedEventData;
+  results: SerializedEventResult[];
 }
 
 function pick(props: Props) {
   const { t } = useTranslation();
   const { event } = props;
+  const results: EventResult[] = props.results.map(r => ({
+    name: r.name,
+    picks: r.picks.map(p => DateTimeRange().fromString(p))
+  }));
   const eventData = parseEventData(event);
   const router = useRouter();
   const session = useSession(eventData.nanoid);
   const [value, setValue] = useState<DateTimeRange[]>([]);
   const [tab, setTab] = useState<'my' | 'result'>('my');
   const [insertedPick, setInsertedPick] = useState<Pick | null>();
-  const {
-    result,
-    refresh
-  } = usePickResult(eventData.nanoid);
 
   async function submit() {
     if (!session) {
@@ -53,7 +60,6 @@ function pick(props: Props) {
         });
       const pick = parsePick(await res.json());
       setInsertedPick(pick);
-      await refresh();
     } catch (err) {
       console.error(err);
     } finally {
@@ -75,7 +81,7 @@ function pick(props: Props) {
             <p className="flex-1 p-2 mb-8">
               {t('current_availability_label')}
             </p>
-            <AvailabilityTable event={eventData} readonly result={result}/>
+            <AvailabilityTable event={eventData} readonly result={results}/>
           </div>
         </PageContainer>
         <Footer/>
@@ -105,7 +111,7 @@ function pick(props: Props) {
         </div>
         <AvailabilityTable
           readonly={tab === 'result'}
-          result={result}
+          result={results}
           event={eventData}
           value={value}
           onChange={setValue}/>
@@ -124,4 +130,32 @@ function pick(props: Props) {
 
 export default pick;
 
-export const getServerSideProps = getServerSidePropsWithEventData;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  };
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const eventId = ctx.params?.eventId;
+  if (!eventId || typeof eventId !== 'string') return {
+    props: {},
+    redirect: { destination: '/', }
+  };
+  if (eventId.length !== 6) {
+    return { notFound: true, };
+  }
+  const event = await getEvent(eventId);
+  const results = await getPicks(eventId);
+  return {
+    revalidate: 1,
+    props: {
+      results,
+      event,
+      ...(await serverSideTranslations(
+        ctx.locale ? ctx.locale : 'en-US',
+        ['common']))
+    }
+  };
+};

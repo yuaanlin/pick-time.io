@@ -1,7 +1,4 @@
 import useSession from '@hooks/useSession';
-import usePickResult from '@hooks/usePickResult';
-import getServerSidePropsWithEventData
-  from '@services/getServerSidePropsWithEventData';
 import { parseEventData, SerializedEventData } from '@models/event';
 import PageHead from '@components/PageHead';
 import PageContainer from '@components/PageContainer';
@@ -10,18 +7,28 @@ import TopNav from '@components/TopNav';
 import AvailabilityTable from '@components/AvailabilityTable';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import { GetStaticProps } from 'next';
+import getEvent from '@services/getEvent';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import getPicks from '@services/getPicks';
+import { DateTimeRange } from '@models/DateTimeRange';
+import { EventResult, SerializedEventResult } from '@models/Pick';
 
 interface Props {
   event: SerializedEventData;
+  results: SerializedEventResult[];
 }
 
 export default function (props: Props) {
-  const { event } = props;
+  const { event, } = props;
+  const results: EventResult[] = props.results.map(r => ({
+    name: r.name,
+    picks: r.picks.map(p => DateTimeRange().fromString(p))
+  }));
   const router = useRouter();
   const { t } = useTranslation();
   const eventData = parseEventData(event);
   const session = useSession(eventData.nanoid);
-  const { result } = usePickResult(eventData.nanoid);
 
   return <div>
     <PageHead
@@ -35,7 +42,7 @@ export default function (props: Props) {
       </div>
       <div className="mt-16">
         <p className="mb-8">{t('current_availability_label')}</p>
-        <AvailabilityTable readonly event={eventData} result={result}/>
+        <AvailabilityTable readonly event={eventData} result={results}/>
       </div>
       <button
         onClick={async () => {
@@ -52,4 +59,32 @@ export default function (props: Props) {
   </div>;
 }
 
-export const getServerSideProps = getServerSidePropsWithEventData;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  };
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const eventId = ctx.params?.eventId;
+  if (!eventId || typeof eventId !== 'string') return {
+    props: {},
+    redirect: { destination: '/', }
+  };
+  if (eventId.length !== 6) {
+    return { notFound: true, };
+  }
+  const event = await getEvent(eventId);
+  const results = await getPicks(eventId);
+  return {
+    revalidate: 1,
+    props: {
+      results,
+      event,
+      ...(await serverSideTranslations(
+        ctx.locale ? ctx.locale : 'en-US',
+        ['common']))
+    }
+  };
+};

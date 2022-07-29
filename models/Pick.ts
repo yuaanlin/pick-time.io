@@ -19,6 +19,16 @@ export interface SerializedPick {
 
 export type EventPicksResults = { name: string, picks: DateTimeRange[] }[];
 
+export interface EventResult {
+  name: string,
+  picks: DateTimeRange[]
+}
+
+export interface SerializedEventResult {
+  name: string,
+  picks: string[]
+}
+
 export function parsePick(p: SerializedPick): Pick {
   return {
     _id: new ObjectId(p._id),

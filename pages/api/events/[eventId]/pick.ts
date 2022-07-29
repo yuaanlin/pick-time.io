@@ -2,6 +2,7 @@ import { DateTimeRange } from '@models/DateTimeRange';
 import getMongo from '@utils/getMongo';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
+import getPicks from '@services/getPicks';
 
 const pick: NextApiHandler = async (req, res) => {
   switch (req.method) {
@@ -16,24 +17,12 @@ const pick: NextApiHandler = async (req, res) => {
 };
 
 async function handleGetPicks(req: NextApiRequest, res: NextApiResponse) {
-  const mongo = await getMongo();
-  const picks = await mongo.collection('picks').aggregate([
-    { $match: { eventId: req.query.eventId } },
-    {
-      $group: {
-        _id: '$userName',
-        value: { $last: '$value' },
-        createdAt: { $last: '$createdAt' }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        name: '$_id',
-        picks: '$value',
-      }
-    }
-  ]).toArray();
+  const { eventId } = req.query;
+  if (!eventId || typeof eventId !== 'string') {
+    res.status(404).json({ error: 'NOT_FOUND' });
+    return;
+  }
+  const picks = await getPicks(eventId);
   res.status(200).json(picks);
 }
 
