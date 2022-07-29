@@ -129,15 +129,9 @@ function AvailabilityTable(props: Props) {
   };
 
   const handleTouchEnd = () => {
-    if (readonly) return;
-    if (!onChange || !value) return;
-    if (!touchStart) return;
-    if (!touchEnd) {
-      if (value.find(a => a.equals(touchStart)))
-        onChange([...value.filter(v => !v.equals(touchStart))]);
-      else onChange([...value, touchStart]);
-      return;
-    }
+    setTouchStart(undefined);
+    setTouchEnd(undefined);
+    if (readonly || !onChange || !value || !touchStart) return;
     const append = valueBetweenTouch;
     let v: any = {};
     value.forEach((t) => v[t.toString()] = true);
@@ -146,8 +140,6 @@ function AvailabilityTable(props: Props) {
     else append.forEach((t) => v[t.toString()] = true);
     onChange(Object.keys(v).filter(t => v[t])
       .map(t => DateTimeRange().fromString(t)));
-    setTouchStart(undefined);
-    setTouchEnd(undefined);
   };
 
   const mergedTimeRange: TimeRange[][] = [];
@@ -203,7 +195,10 @@ function AvailabilityTable(props: Props) {
                     key={dtr.toString()}
                     onClick={() => readonly && setSelectedTimeRange(dtr)}
                     onTouchStart={() => {
-                      !readonly && setTouchStart(dtr);
+                      if (!readonly) {
+                        setTouchStart(dtr);
+                        setTouchEnd(dtr);
+                      }
                     }}
                     onMouseDown={() => {
                       !readonly && setTouchStart(dtr);
