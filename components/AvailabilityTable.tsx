@@ -157,15 +157,15 @@ function AvailabilityTable(props: Props) {
       <div className="pt-12">
         {mergedTimeRange.map((range, i) =>
           <div key={i} className="mb-4 mr-4">
-            {range.map((t, j) => <>
-              <p key={t.start.toString()} style={{ height: 48 }}>
-                {t.start.toString()}
-              </p>
-              {j === range.length - 1 &&
-                <p key={t.end.toString()} style={{ height: 24 }}>
-                  {t.end.toString()}
-                </p>}
-            </>)}
+            {range.map(t => <p
+              key={t.start.toString()}
+              style={{ height: 48 }}>
+              {t.start.toString()}
+            </p>
+            )}
+            <p key={range[range.length - 1].toString()} style={{ height: 24 }}>
+              {range[range.length - 1].end.toString()}
+            </p>
           </div>)}
       </div>
       <div
