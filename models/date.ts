@@ -7,6 +7,20 @@ export type DayCode =
   | 'saturday'
   | 'sunday';
 
+export type MonthCode =
+  'january'
+  | 'february'
+  | 'march'
+  | 'april'
+  | 'may'
+  | 'june'
+  | 'july'
+  | 'august'
+  | 'september'
+  | 'october'
+  | 'november'
+  | 'december';
+
 export interface DateValue {
   year: number;
   month: number;
@@ -17,6 +31,7 @@ export interface DateValue {
   earlierThan: (other: DateValue) => boolean;
   laterThan: (other: DateValue) => boolean;
   getDayCode: () => DayCode;
+  getMonthCode: () => MonthCode;
   addMonth: (n: number) => DateValue;
 }
 
@@ -64,6 +79,22 @@ export function DateValue(year?: number, month?: number,
         'friday',
         'saturday',
       ] as DayCode[])[d.getDay()];
+    },
+    getMonthCode() {
+      return ([
+        'january',
+        'february',
+        'march',
+        'april',
+        'may',
+        'june',
+        'july',
+        'august',
+        'september',
+        'october',
+        'november',
+        'december',
+      ] as MonthCode[])[this.month - 1];
     },
     addMonth(n) {
       if (this.month + n > 12) {

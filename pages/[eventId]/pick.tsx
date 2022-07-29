@@ -111,7 +111,7 @@ function pick(props: Props) {
           onChange={setValue}/>
         <button
           className="fixed bottom-8 right-8 bg-zinc-300 items-center
-        px-4 py-2 rounded-lg flex z-50 shadow-lg"
+        px-4 py-2 rounded-lg flex z-40 shadow-lg"
           onClick={submit}>
           <p>{t('submit_result')}</p>
           <img src="/arrow.svg" alt="" className="ml-4 h-3"/>

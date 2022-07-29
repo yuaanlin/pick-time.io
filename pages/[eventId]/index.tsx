@@ -43,7 +43,7 @@ export default function (props: Props) {
           else await router.push(`/${eventData.nanoid}/signin`);
         }}
         className="fixed bottom-8 right-8 bg-zinc-300 items-center
-        px-4 py-2 rounded-lg flex z-50 shadow-lg">
+        px-4 py-2 rounded-lg flex z-40 shadow-lg">
         <p>{t('schedule_now')}</p>
         <img src="/arrow.svg" alt="" className="ml-4 h-3"/>
       </button>

@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { TouchEvent, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';
 import { TimeRange } from '@models/time';
+import AvailableTimeModal from '@components/AvailableTimeModal';
 
 interface Props {
   event: EventData;
@@ -29,6 +30,7 @@ function AvailabilityTable(props: Props) {
   const { t } = useTranslation();
   const [touchStart, setTouchStart] = useState<DateTimeRange>();
   const [touchEnd, setTouchEnd] = useState<DateTimeRange>();
+  const [selectedTimeRange, setSelectedTimeRange] = useState<DateTimeRange>();
 
   const options = useMemo(() => {
     if (readonly) return [];
@@ -158,67 +160,75 @@ function AvailabilityTable(props: Props) {
     }
   });
 
-  return <div className="flex w-full">
-    <div className="pt-12">
-      {mergedTimeRange.map((range, i) =>
-        <div key={i} className="mb-4 mr-4">
-          {range.map((t, j) => <>
-            <p key={t.start.toString()} style={{ height: 48 }}>
-              {t.start.toString()}
+  return <>
+    <div className="flex w-full">
+      <div className="pt-12">
+        {mergedTimeRange.map((range, i) =>
+          <div key={i} className="mb-4 mr-4">
+            {range.map((t, j) => <>
+              <p key={t.start.toString()} style={{ height: 48 }}>
+                {t.start.toString()}
+              </p>
+              {j === range.length - 1 &&
+                <p key={t.end.toString()} style={{ height: 24 }}>
+                  {t.end.toString()}
+                </p>}
+            </>)}
+          </div>)}
+      </div>
+      <div
+        className="flex flex-grow overflow-x-scroll pb-12 select-none"
+        ref={containerRef}>
+        {event.availableDates.map(date =>
+          <div
+            /* @ts-ignore */
+            value={date.toString()}
+            key={date.toString()}
+            className="flex flex-col mr-2">
+            <p className="text-center">{date.toString()}</p>
+            <p className="text-center">
+              {t('date_day_short_' + date.getDayCode())}
             </p>
-            {j === range.length - 1 &&
-              <p key={t.end.toString()} style={{ height: 24 }}>
-                {t.end.toString()}
-              </p>}
-          </>)}
-        </div>)}
-    </div>
-    <div
-      className="flex flex-grow overflow-x-scroll pb-12 select-none"
-      ref={containerRef}>
-      {event.availableDates.map(date =>
-        <div
-          /* @ts-ignore */
-          value={date.toString()}
-          key={date.toString()}
-          className="flex flex-col mr-2">
-          <p className="text-center">{date.toString()}</p>
-          <p className="text-center">
-            {t('date_day_short_' + date.getDayCode())}
-          </p>
-          {mergedTimeRange.map((range, i) =>
-            <div
-              style={{ height: 48 * range.length + 24 }}
-              key={i}
-              className="flex flex-col border-2 border-black rounded-lg
+            {mergedTimeRange.map((range, i) =>
+              <div
+                style={{ height: 48 * range.length + 24 }}
+                key={i}
+                className="flex flex-col border-2 border-black rounded-lg
                overflow-hidden mb-4">
-              {range.map(time => {
-                const dtr = DateTimeRange(date, time);
-                return <div
-                  /* @ts-ignore */
-                  value={dtr.toString()}
-                  key={dtr.toString()}
-                  onTouchStart={() => {
-                    !readonly && setTouchStart(dtr);
-                  }}
-                  onMouseDown={() => {
-                    !readonly && setTouchStart(dtr);
-                  }}
-                  onTouchMove={handleTouchMove}
-                  onMouseMove={handleMove}
-                  onTouchEnd={handleTouchEnd}
-                  onMouseUp={handleTouchEnd}
-                  style={getColor(dtr)}
-                  className={cx('date-time-range-option',
-                    'flex-1 border-b border-black border-opacity-30 w-24',
-                    !readonly && 'touch-none select-none')}>
-                </div>;
-              })}
-            </div>
-          )}
-        </div>)}
+                {range.map(time => {
+                  const dtr = DateTimeRange(date, time);
+                  return <div
+                    /* @ts-ignore */
+                    value={dtr.toString()}
+                    key={dtr.toString()}
+                    onClick={() => readonly && setSelectedTimeRange(dtr)}
+                    onTouchStart={() => {
+                      !readonly && setTouchStart(dtr);
+                    }}
+                    onMouseDown={() => {
+                      !readonly && setTouchStart(dtr);
+                    }}
+                    onTouchMove={handleTouchMove}
+                    onMouseMove={handleMove}
+                    onTouchEnd={handleTouchEnd}
+                    onMouseUp={handleTouchEnd}
+                    style={getColor(dtr)}
+                    className={cx('date-time-range-option',
+                      'flex-1 border-b border-black border-opacity-30 w-24',
+                      !readonly && 'touch-none select-none')}>
+                  </div>;
+                })}
+              </div>
+            )}
+          </div>)}
+      </div>
     </div>
-  </div>;
+    <AvailableTimeModal
+      event={event}
+      onClose={() => setSelectedTimeRange(undefined)}
+      timeRange={selectedTimeRange}
+      result={result}/>
+  </>;
 }
 
 export default AvailabilityTable;
