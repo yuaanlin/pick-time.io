@@ -101,13 +101,15 @@ function pick(props: Props) {
         <div className="flex mb-8">
           <p
             onClick={() => setTab('my')}
-            className={cx('flex-1 text-center p-2',
+            className={cx('flex-1 text-center p-2 select-none cursor-pointer',
+              'hover:opacity-70 transition-all',
               tab === 'my' ? 'border-b-2 border-black' : 'opacity-30')}>
             {t('your_availability_label')}
           </p>
           <p
             onClick={() => setTab('result')}
-            className={cx('flex-1 text-center p-2',
+            className={cx('flex-1 text-center p-2 select-none cursor-pointer',
+              'hover:opacity-70 transition-all',
               tab === 'result' ? 'border-b-2 border-black' : 'opacity-30')}>
             {t('current_availability_label')}
           </p>

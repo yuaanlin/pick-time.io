@@ -46,7 +46,7 @@ function AvailableTimeModal(props: Props) {
         'bottom-0 left-0 rounded-t-2xl transition-all duration-300',
         'shadow-xl pt-8 pb-16',
         (!isShowing || !props.timeRange) && '-bottom-[100vh]')}>
-      {timeRange && <>
+      {timeRange && <div className="max-w-md mx-auto">
         <p className="text-2xl text-center">
           {timeRange.timeRange.toString()}
         </p>
@@ -71,7 +71,7 @@ function AvailableTimeModal(props: Props) {
             {r.name}
           </p>)}
         </div>
-      </>}
+      </div>}
     </div>
   </>;
 }
