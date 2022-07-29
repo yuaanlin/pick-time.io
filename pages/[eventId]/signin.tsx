@@ -38,7 +38,7 @@ function signIn(props: Props) {
       }),
     });
     const data = await res.json();
-    updateSession(eventData.nanoid, data.user.name, data.token);
+    updateSession(eventData.nanoid, data.name, data.token);
     await router.push(`/${eventData.nanoid}/pick`);
   }
 
