@@ -1,9 +1,7 @@
 import { DateTimeRange } from '@models/DateTimeRange';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
-import getPicks from '@services/getPicks';
-import getRedis from '@utils/getRedis';
-import { SerializedEventResult } from '@models/Pick';
+import RedisClient from '@utils/getRedis';
 
 const pick: NextApiHandler = async (req, res) => {
   switch (req.method) {
@@ -23,7 +21,8 @@ async function handleGetPicks(req: NextApiRequest, res: NextApiResponse) {
     res.status(404).json({ error: 'NOT_FOUND' });
     return;
   }
-  const picks = await getPicks(eventId);
+  const redis = new RedisClient();
+  const picks = await redis.getPicks(eventId) || [];
   res.status(200).json(picks);
 }
 
@@ -68,29 +67,26 @@ async function handleCreatePick(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
-  const redis = await getRedis();
-  const findEvent = await redis.get(`events:${eventId}`);
+  const redis = new RedisClient();
+  const findEvent = await redis.getEvent(eventId);
   if (!findEvent) {
     res.status(404).json({ error: 'ERROR_EVENT_NOT_FOUND' });
     return;
   }
 
-  const findUser = await redis.get(
-    `events:${eventId}:users:${parsedToken.sub}`);
+  const findUser = await redis.getUser(eventId, parsedToken.sub);
   if (!findUser) {
     res.status(404).json({ error: 'ERROR_USER_NOT_FOUND' });
     return;
   }
 
-  let picks = await redis.get(
-    `events:${eventId}:picks`) as SerializedEventResult[];
-  if (picks.find(p => p.name === parsedToken.sub)) {
-    picks = picks.filter(p => p.name !== parsedToken.sub);
-    picks.push({
-      name: parsedToken.sub,
-      picks: value
-    });
-  }
+  let picks = await redis.getPicks(eventId) || [];
+  picks = picks.filter(p => p.name !== parsedToken.sub);
+  picks.push({
+    name: parsedToken.sub,
+    picks: value
+  });
+  await redis.setPicks(eventId, picks);
 
   res.status(201).json({ ok: true });
 }

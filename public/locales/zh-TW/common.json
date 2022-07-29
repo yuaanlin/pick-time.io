@@ -48,5 +48,7 @@
   "password_description_label": "如果有輸入密碼，你可以隨時修改提交的結果",
   "result_title": "做得好！",
   "result_description": "你可以參加活動的時段已經順利提交了。",
-  "available_member_ratio_label": "位成員可以參加"
+  "available_member_ratio_label": "位成員可以參加",
+  "event_not_found_label": "這個活動可能已經過期或被刪除了！",
+  "create_new_event_label": "建立新活動"
 }

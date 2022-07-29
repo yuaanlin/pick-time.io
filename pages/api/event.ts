@@ -2,7 +2,7 @@ import { DateValue } from '@models/date';
 import { TimeRange } from '@models/time';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { customAlphabet } from 'nanoid';
-import getRedis from '@utils/getRedis';
+import RedisClient from '@utils/getRedis';
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -32,14 +32,14 @@ async function handleCreateEvent(req: NextApiRequest, res: NextApiResponse) {
       res.status(400).json({ error: 'Invalid request' });
       return;
     }
-    const redis = getRedis();
+    const redis = new RedisClient();
     const insert = {
       title,
       nanoid: nanoid(),
       availableDates: d,
       availableTimes: t
     };
-    await redis.set(`event:${insert.nanoid}`, insert);
+    await redis.setEvent(insert);
     res.status(201).json(insert);
   } catch (err) {
     console.error(err);

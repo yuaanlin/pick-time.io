@@ -48,5 +48,7 @@
   "password_description_label": "Password is use for your later modification.",
   "result_title": "Well Done!",
   "result_description": "Your availability has been submitted.",
-  "available_member_ratio_label": "members are available"
+  "available_member_ratio_label": "members are available",
+  "event_not_found_label": "The event you are looking for is not found or expired.",
+  "create_new_event_label": "Create a new event"
 }

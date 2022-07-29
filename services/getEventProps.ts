@@ -1,9 +1,8 @@
 import { GetStaticProps } from 'next';
-import getEvent from '@services/getEvent';
-import getPicks from '@services/getPicks';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import RedisClient from '@utils/getRedis';
 
-export const getEvnetAndResultProps: GetStaticProps = async (ctx) => {
+export const getEventAndResultProps: GetStaticProps = async (ctx) => {
   const eventId = ctx.params?.eventId;
   if (!eventId || typeof eventId !== 'string') return {
     props: {},
@@ -12,8 +11,10 @@ export const getEvnetAndResultProps: GetStaticProps = async (ctx) => {
   if (eventId.length !== 6) {
     return { notFound: true, };
   }
-  const event = await getEvent(eventId);
-  const results = await getPicks(eventId);
+  const redis = new RedisClient();
+  const event = await redis.getEvent(eventId);
+  const results = await redis.getPicks(eventId) || [];
+  if (!event) return { notFound: true };
   return {
     revalidate: 1,
     props: {
@@ -35,7 +36,8 @@ export const getEventProps: GetStaticProps = async (ctx) => {
   if (eventId.length !== 6) {
     return { notFound: true, };
   }
-  const event = await getEvent(eventId);
+  const redis = new RedisClient();
+  const event = await redis.getEvent(eventId);
   return {
     revalidate: 1,
     props: {

@@ -1,6 +1,6 @@
-import getEvent from './getEvent';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import RedisClient from '@utils/getRedis';
 
 const getServerSidePropsWithEventData: GetServerSideProps = async (ctx) => {
   const eventId = ctx.query.eventId;
@@ -15,7 +15,8 @@ const getServerSidePropsWithEventData: GetServerSideProps = async (ctx) => {
       redirect: { destination: '/', }
     };
   }
-  const event = await getEvent(eventId);
+  const redis = new RedisClient();
+  const event = await redis.getEvent(eventId);
   return {
     props: {
       event,

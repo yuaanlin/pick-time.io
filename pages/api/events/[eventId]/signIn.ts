@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
-import getRedis from '@utils/getRedis';
+import RedisClient from '@utils/getRedis';
 
 const signIn: NextApiHandler = async (req, res) => {
   const {
@@ -15,8 +15,13 @@ const signIn: NextApiHandler = async (req, res) => {
   }
 
   const { eventId } = req.query;
-  const redis = await getRedis();
-  const find = await redis.get(`events:${eventId}:users:${name}`) as any;
+  if (!eventId || typeof eventId !== 'string') {
+    res.status(404).json({ error: 'NOT_FOUND' });
+    return;
+  }
+
+  const redis = new RedisClient();
+  const find = await redis.getUser(eventId, name) as any;
   if (!find) {
     const insertData: any = {
       name,
@@ -25,7 +30,7 @@ const signIn: NextApiHandler = async (req, res) => {
     if (password.length > 0) {
       insertData.passwordHash = bcrypt.hashSync(password, 10);
     }
-    await redis.set(`events:${eventId}:users:${name}`, insertData);
+    await redis.setUser(eventId, insertData.name, insertData.passwordHash);
     const token = jsonwebtoken.sign({
       iat: Date.now(),
       sub: name,

@@ -1,11 +1,6 @@
 import useSession from '@hooks/useSession';
 import { DateTimeRange } from '@models/DateTimeRange';
-import {
-  EventResult,
-  parsePick,
-  Pick,
-  SerializedEventResult
-} from '@models/Pick';
+import { EventResult, SerializedEventResult } from '@models/Pick';
 import PageHead from '@components/PageHead';
 import PageContainer from '@components/PageContainer';
 import Footer from '@components/Footer';
@@ -17,7 +12,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import cx from 'classnames';
 import NProgress from 'nprogress';
-import { getEvnetAndResultProps } from '@services/getEventProps';
+import { getEventAndResultProps } from '@services/getEventProps';
 import usePickResult from '@hooks/usePickResult';
 
 interface Props {
@@ -37,8 +32,8 @@ function pick(props: Props) {
   const session = useSession(eventData.nanoid);
   const [value, setValue] = useState<DateTimeRange[]>([]);
   const [tab, setTab] = useState<'my' | 'result'>('my');
-  const [insertedPick, setInsertedPick] = useState<Pick | null>();
   const clientFetchedResults = usePickResult(eventData.nanoid);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   async function submit() {
     if (!session) {
@@ -57,8 +52,9 @@ function pick(props: Props) {
           },
           body: JSON.stringify({ value: value.map(v => v.toString()) })
         });
-      const pick = parsePick(await res.json());
-      setInsertedPick(pick);
+      if ((await res.json()).ok) {
+        setIsSubmitted(true);
+      }
       await clientFetchedResults.refresh();
     } catch (err) {
       console.error(err);
@@ -67,7 +63,7 @@ function pick(props: Props) {
     }
   }
 
-  if (insertedPick) {
+  if (isSubmitted) {
     return (
       <div>
         <PageHead
@@ -140,4 +136,4 @@ export const getStaticPaths = () => ({
   fallback: 'blocking'
 });
 
-export const getStaticProps = getEvnetAndResultProps;
+export const getStaticProps = getEventAndResultProps;

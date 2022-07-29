@@ -9,7 +9,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { DateTimeRange } from '@models/DateTimeRange';
 import { EventResult, SerializedEventResult } from '@models/Pick';
-import { getEvnetAndResultProps } from '@services/getEventProps';
+import { getEventAndResultProps } from '@services/getEventProps';
 
 interface Props {
   event: SerializedEventData;
@@ -61,4 +61,4 @@ export const getStaticPaths = () => ({
   fallback: 'blocking'
 });
 
-export const getStaticProps = getEvnetAndResultProps;
+export const getStaticProps = getEventAndResultProps;
