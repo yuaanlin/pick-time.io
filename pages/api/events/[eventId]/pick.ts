@@ -1,8 +1,9 @@
 import { DateTimeRange } from '@models/DateTimeRange';
-import getMongo from '@utils/getMongo';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
 import getPicks from '@services/getPicks';
+import getRedis from '@utils/getRedis';
+import { SerializedEventResult } from '@models/Pick';
 
 const pick: NextApiHandler = async (req, res) => {
   switch (req.method) {
@@ -29,6 +30,10 @@ async function handleGetPicks(req: NextApiRequest, res: NextApiResponse) {
 async function handleCreatePick(req: NextApiRequest, res: NextApiResponse) {
 
   const { eventId } = req.query;
+  if (!eventId || typeof eventId !== 'string') {
+    res.status(404).json({ error: 'NOT_FOUND' });
+    return;
+  }
 
   const value: string[] = req.body.value;
   const parsedValue: DateTimeRange[] = value.map(
@@ -63,42 +68,31 @@ async function handleCreatePick(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
-  const mongo = await getMongo();
-  const findEvent = await mongo.collection('events')
-    .findOne({ nanoid: eventId });
+  const redis = await getRedis();
+  const findEvent = await redis.get(`events:${eventId}`);
   if (!findEvent) {
     res.status(404).json({ error: 'ERROR_EVENT_NOT_FOUND' });
     return;
   }
 
-  const findUser = await mongo.collection('users').findOne({
-    eventId,
-    name: parsedToken.sub
-  });
-
+  const findUser = await redis.get(
+    `events:${eventId}:users:${parsedToken.sub}`);
   if (!findUser) {
     res.status(404).json({ error: 'ERROR_USER_NOT_FOUND' });
     return;
   }
 
-  const insert = await mongo.collection('picks').insertOne({
-    eventId,
-    userName: parsedToken.sub,
-    value,
-    createdAt: new Date()
-  });
-
-  const findPick = await mongo.collection('picks').findOne({
-    _id: insert.insertedId,
-    eventId,
-  });
-
-  if (!findPick) {
-    res.status(500).json({ error: 'ERROR_INSERT_PICK' });
-    return;
+  let picks = await redis.get(
+    `events:${eventId}:picks`) as SerializedEventResult[];
+  if (picks.find(p => p.name === parsedToken.sub)) {
+    picks = picks.filter(p => p.name !== parsedToken.sub);
+    picks.push({
+      name: parsedToken.sub,
+      picks: value
+    });
   }
 
-  res.status(201).json({ ...findPick });
+  res.status(201).json({ ok: true });
 }
 
 export default pick;

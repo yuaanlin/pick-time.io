@@ -28,7 +28,7 @@ function DatePicker(props: Props) {
   const {
     value,
     onChange,
-    readonly
+    readonly: isReadonly
   } = props;
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -148,7 +148,7 @@ function DatePicker(props: Props) {
       <p className="text-center flex-grow">
         {currMonth} {currYear}
       </p>
-      {(!readonly || value?.find(v => v.laterThan(DateValue(currYear,
+      {(!isReadonly || value?.find(v => v.laterThan(DateValue(currYear,
         currMonth, 1).addMonth(1)))) &&
           <p
             onClick={nextMonth}
@@ -167,8 +167,8 @@ function DatePicker(props: Props) {
         key={d.toString()}
         /* @ts-ignore */
         value={d.toString()}
-        onTouchStart={() => !readonly && setTouchStart(d)}
-        onMouseDown={() => !readonly && setTouchStart(d)}
+        onTouchStart={() => !isReadonly && setTouchStart(d)}
+        onMouseDown={() => !isReadonly && setTouchStart(d)}
         onTouchMove={handleTouchMove}
         onMouseMove={handleMove}
         onTouchEnd={handleTouchEnd}

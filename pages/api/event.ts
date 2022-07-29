@@ -1,13 +1,16 @@
-import getMongo from '@utils/getMongo';
 import { DateValue } from '@models/date';
 import { TimeRange } from '@models/time';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { customAlphabet } from 'nanoid';
+import getRedis from '@utils/getRedis';
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
     case 'POST':
       return handleCreateEvent(req, res);
+    default:
+      res.setHeader('Allow', ['POST']);
+      res.status(405).json({ error: 'ERROR_METHOD_NOT_ALLOWED' });
   }
 };
 
@@ -29,26 +32,19 @@ async function handleCreateEvent(req: NextApiRequest, res: NextApiResponse) {
       res.status(400).json({ error: 'Invalid request' });
       return;
     }
-
-    const mongo = getMongo();
-    const insert = await mongo.collection('events').insertOne({
+    const redis = getRedis();
+    const insert = {
       title,
       nanoid: nanoid(),
       availableDates: d,
       availableTimes: t
-    });
-
-    const event = await mongo.collection('events')
-      .findOne({ _id: insert.insertedId });
-    res.status(201).json(event);
+    };
+    await redis.set(`event:${insert.nanoid}`, insert);
+    res.status(201).json(insert);
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: 'Invalid request' });
   }
-}
-
-function handleGetEvent(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json({});
 }
 
 export default handler;

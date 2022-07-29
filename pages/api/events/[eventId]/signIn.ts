@@ -1,7 +1,7 @@
-import getMongo from '@utils/getMongo';
 import { NextApiHandler } from 'next';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
+import getRedis from '@utils/getRedis';
 
 const signIn: NextApiHandler = async (req, res) => {
   const {
@@ -15,11 +15,8 @@ const signIn: NextApiHandler = async (req, res) => {
   }
 
   const { eventId } = req.query;
-  const mongo = getMongo();
-  const find = await mongo.collection('users').findOne({
-    name,
-    eventId
-  });
+  const redis = await getRedis();
+  const find = await redis.get(`events:${eventId}:users:${name}`) as any;
   if (!find) {
     const insertData: any = {
       name,
@@ -28,20 +25,14 @@ const signIn: NextApiHandler = async (req, res) => {
     if (password.length > 0) {
       insertData.passwordHash = bcrypt.hashSync(password, 10);
     }
-    const insert = await mongo.collection('users').insertOne(insertData);
-    const user = await mongo.collection('users')
-      .findOne({ _id: insert.insertedId }, { projection: { passwordHash: 0 } });
-    if (!user) {
-      res.status(500).json({ error: 'Failed to create user' });
-      return;
-    }
+    await redis.set(`events:${eventId}:users:${name}`, insertData);
     const token = jsonwebtoken.sign({
       iat: Date.now(),
-      sub: user.name,
+      sub: name,
       eventId
     }, process.env.JWT_SECRET);
     res.status(201).json({
-      user,
+      name: insertData.name,
       token
     });
     return;

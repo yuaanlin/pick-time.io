@@ -1,8 +1,6 @@
 import { DateTimeRange } from './DateTimeRange';
-import { ObjectId } from 'bson';
 
 export interface Pick {
-  _id: ObjectId;
   eventId: string;
   userName: string;
   value: DateTimeRange[];
@@ -31,7 +29,6 @@ export interface SerializedEventResult {
 
 export function parsePick(p: SerializedPick): Pick {
   return {
-    _id: new ObjectId(p._id),
     eventId: p.eventId,
     userName: p.userName,
     value: p.value.map(v => DateTimeRange().fromString(v)),

@@ -18,7 +18,7 @@ function TwoColumnTimePicker(props: Props) {
   const {
     value,
     onChange,
-    readonly
+    readonly: isReadonly,
   } = props;
   const leftContainerRef = useRef<HTMLDivElement>(null);
   const rightContainerRef = useRef<HTMLDivElement>(null);
@@ -85,7 +85,7 @@ function TwoColumnTimePicker(props: Props) {
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || readonly || !onChange) return;
+    if (!touchStart || isReadonly || !onChange) return;
     if (!touchEnd) {
       if (value?.find(a => a.equals(touchStart)))
         onChange([...value.filter(v => !v.equals(touchStart))]);
@@ -129,8 +129,8 @@ function TwoColumnTimePicker(props: Props) {
             'w-full border-b-2 border-opacity-30 border-black',
             'touch-none select-none',
             getColor(opt))}
-          onTouchStart={() => !readonly && setTouchStart(opt)}
-          onMouseDown={() => !readonly && setTouchStart(opt)}
+          onTouchStart={() => !isReadonly && setTouchStart(opt)}
+          onMouseDown={() => !isReadonly && setTouchStart(opt)}
           onTouchMove={handleTouchMove}
           onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
@@ -142,7 +142,7 @@ function TwoColumnTimePicker(props: Props) {
       <div
         ref={rightContainerRef}
         className="border-4 border-black rounded-3xl overflow-hidden w-full">
-        {rightTimeOptions.map((opt, i) => <div
+        {rightTimeOptions.map(opt => <div
           key={opt.toString()}
           style={{ height: 36 }}
           /* @ts-ignore */
@@ -151,8 +151,8 @@ function TwoColumnTimePicker(props: Props) {
             'w-full border-b-2 border-opacity-30 border-black',
             'touch-none select-none',
             getColor(opt))}
-          onTouchStart={() => !readonly && setTouchStart(opt)}
-          onMouseDown={() => !readonly && setTouchStart(opt)}
+          onTouchStart={() => !isReadonly && setTouchStart(opt)}
+          onMouseDown={() => !isReadonly && setTouchStart(opt)}
           onTouchMove={handleTouchMove}
           onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}

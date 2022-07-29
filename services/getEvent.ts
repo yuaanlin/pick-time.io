@@ -1,12 +1,11 @@
-import getMongo from '@utils/getMongo';
+import getRedis from '@utils/getRedis';
+import { SerializedEventData } from '@models/event';
 
 async function getEvent(nanoId: string) {
-  const mongo = await getMongo();
-  const find: any = await mongo.collection('events')
-    .findOne({ nanoid: nanoId });
-  if (!find) throw new Error('Event not found: ' + nanoId);
-  find._id = find?._id.toHexString();
-  return find;
+  const redis = await getRedis();
+  const event = await redis.get(`event:${nanoId}`);
+  if (!event) throw new Error(`Event ${nanoId} not found`);
+  return event as SerializedEventData;
 }
 
 export default getEvent;

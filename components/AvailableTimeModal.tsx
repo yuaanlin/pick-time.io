@@ -1,12 +1,10 @@
 import { DateTimeRange } from '@models/DateTimeRange';
-import { EventData } from '@models/event';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 
 interface Props {
   timeRange: DateTimeRange | undefined;
-  event: EventData;
   result?: { name: string, picks: DateTimeRange[] }[];
   onClose: () => void;
 }
@@ -16,7 +14,6 @@ function AvailableTimeModal(props: Props) {
     onClose,
     timeRange,
     result,
-    event
   } = props;
 
   const [isShowing, setIsShowing] = useState(false);
@@ -36,7 +33,7 @@ function AvailableTimeModal(props: Props) {
 
   return <>
     <div
-      onClick={props.onClose}
+      onClick={onClose}
       className={cx(
         'w-screen h-screen bg-black bg-opacity-30 transition-all',
         'touch-none fixed top-0 left-0 duration-300 z-50',

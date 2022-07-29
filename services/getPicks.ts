@@ -1,24 +1,10 @@
-import getMongo from '@utils/getMongo';
+import getRedis from '@utils/getRedis';
 
 async function getPicks(nanoid: string) {
-  const mongo = await getMongo();
-  return await mongo.collection('picks').aggregate([
-    { $match: { eventId: nanoid } },
-    {
-      $group: {
-        _id: '$userName',
-        value: { $last: '$value' },
-        createdAt: { $last: '$createdAt' }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        name: '$_id',
-        picks: '$value',
-      }
-    }
-  ]).toArray();
+  const redis = await getRedis();
+  const picks = await redis.get(`event:${nanoid}:picks`);
+  if (!picks) return [];
+  return picks as string[];
 }
 
 export default getPicks;

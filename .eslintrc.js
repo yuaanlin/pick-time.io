@@ -54,7 +54,10 @@ module.exports = {
     ],
     'object-curly-newline': ['warn', { multiline: true }],
     'object-curly-spacing': ['warn', 'always'],
-    'comma-spacing': ['warn', { before: false, after: true }],
+    'comma-spacing': ['warn', {
+      before: false,
+      after: true
+    }],
     'no-multi-spaces': ['warn'],
     'import/order': [
       'warn', {
@@ -71,10 +74,17 @@ module.exports = {
       }
     ],
     'react/react-in-jsx-scope': 'off',
-    'no-multiple-empty-lines': ['warn', { max: 1, maxEOF: 1, maxBOF: 0 }],
+    'no-multiple-empty-lines': ['warn', {
+      max: 1,
+      maxEOF: 1,
+      maxBOF: 0
+    }],
     'eol-last': 1,
     'react/jsx-first-prop-new-line': ['warn', 'multiline'],
-    'react/jsx-max-props-per-line': ['warn', { maximum: 1, when: 'multiline' }],
+    'react/jsx-max-props-per-line': ['warn', {
+      maximum: 1,
+      when: 'multiline'
+    }],
     'array-element-newline': ['warn', 'consistent'],
     'jsx-quotes': ['warn', 'prefer-double'],
     'array-bracket-newline': ['warn', { multiline: true }],
