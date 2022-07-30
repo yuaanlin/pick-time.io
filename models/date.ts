@@ -115,5 +115,5 @@ export function getDaysInMonth(year: number, month: number): DateValue[] {
 }
 
 export function getEmptySlotNumberOfMonth(year: number, month: number) {
-  return new Date(year, month, 1).getDay();
+  return new Date(year, month - 1, 1).getDay();
 }
