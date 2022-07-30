@@ -84,14 +84,11 @@ function TwoColumnTimePicker(props: Props) {
     if (end) setTouchEnd(TimeRange().fromString(end));
   };
 
-  const handleTouchEnd = () => {
-    if (!touchStart || isReadonly || !onChange) return;
-    if (!touchEnd) {
-      if (value?.find(a => a.equals(touchStart)))
-        onChange([...value.filter(v => !v.equals(touchStart))]);
-      else onChange([...(value || []), touchStart]);
-      return;
-    }
+  const handleTouchEnd = (ev: any) => {
+    ev.preventDefault();
+    setTouchStart(undefined);
+    setTouchEnd(undefined);
+    if (!touchStart || isReadonly || !onChange || !touchEnd) return;
     const s = touchStart.laterThan(touchEnd) ? touchEnd : touchStart;
     const e = touchStart.earlierThan(touchEnd) ? touchEnd : touchStart;
     const append = options.filter(
@@ -104,8 +101,6 @@ function TwoColumnTimePicker(props: Props) {
     else append.forEach((t) => v[t.toString()] = true);
     onChange(Object.keys(v).filter(t => v[t])
       .map(t => TimeRange().fromString(t)));
-    setTouchStart(undefined);
-    setTouchEnd(undefined);
   };
 
   return <div className="w-full flex gap-4">
@@ -119,7 +114,8 @@ function TwoColumnTimePicker(props: Props) {
     <div className="flex-grow">
       <div
         ref={leftContainerRef}
-        className="border-4 border-black rounded-3xl overflow-hidden w-full">
+        className="border-4 border-black rounded-3xl overflow-hidden
+        w-full cursor-pointer">
         {leftTimeOptions.map((opt) => <div
           key={opt.toString()}
           style={{ height: 36 }}
@@ -129,8 +125,18 @@ function TwoColumnTimePicker(props: Props) {
             'w-full border-b-2 border-opacity-30 border-black',
             'touch-none select-none',
             getColor(opt))}
-          onTouchStart={() => !isReadonly && setTouchStart(opt)}
-          onMouseDown={() => !isReadonly && setTouchStart(opt)}
+          onTouchStart={() => {
+            if (!isReadonly) {
+              setTouchStart(opt);
+              setTouchEnd(opt);
+            }
+          }}
+          onMouseDown={() => {
+            if (!isReadonly) {
+              setTouchStart(opt);
+              setTouchEnd(opt);
+            }
+          }}
           onTouchMove={handleTouchMove}
           onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
@@ -141,7 +147,8 @@ function TwoColumnTimePicker(props: Props) {
     <div className="flex-grow">
       <div
         ref={rightContainerRef}
-        className="border-4 border-black rounded-3xl overflow-hidden w-full">
+        className="border-4 border-black rounded-3xl overflow-hidden
+         w-full cursor-pointer">
         {rightTimeOptions.map(opt => <div
           key={opt.toString()}
           style={{ height: 36 }}
@@ -151,8 +158,18 @@ function TwoColumnTimePicker(props: Props) {
             'w-full border-b-2 border-opacity-30 border-black',
             'touch-none select-none',
             getColor(opt))}
-          onTouchStart={() => !isReadonly && setTouchStart(opt)}
-          onMouseDown={() => !isReadonly && setTouchStart(opt)}
+          onTouchStart={() => {
+            if (!isReadonly) {
+              setTouchStart(opt);
+              setTouchEnd(opt);
+            }
+          }}
+          onMouseDown={() => {
+            if (!isReadonly) {
+              setTouchStart(opt);
+              setTouchEnd(opt);
+            }
+          }}
           onTouchMove={handleTouchMove}
           onMouseMove={handleMouseMove}
           onTouchEnd={handleTouchEnd}
