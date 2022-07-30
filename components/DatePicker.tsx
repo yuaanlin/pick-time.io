@@ -114,14 +114,11 @@ function DatePicker(props: Props) {
     if (end) setTouchEnd(DateValue().fromString(end));
   };
 
-  const handleTouchEnd = () => {
-    if (!touchStart || !onChange) return;
-    if (!touchEnd) {
-      if (value?.find(a => a.equals(touchStart)))
-        onChange([...value.filter(v => !v.equals(touchStart))]);
-      else onChange([...(value || []), touchStart]);
-      return;
-    }
+  const handleTouchEnd = (ev: any) => {
+    ev.preventDefault();
+    setTouchStart(undefined);
+    setTouchEnd(undefined);
+    if (!touchStart || !onChange || !touchEnd) return;
     const s = touchStart.laterThan(touchEnd) ? touchEnd : touchStart;
     const e = touchStart.earlierThan(touchEnd) ? touchEnd : touchStart;
     const append = days.filter(
@@ -134,8 +131,6 @@ function DatePicker(props: Props) {
     else append.forEach((t) => v[t.toString()] = true);
     onChange(Object.keys(v).filter(t => v[t])
       .map(t => DateValue().fromString(t)));
-    setTouchStart(undefined);
-    setTouchEnd(undefined);
   };
 
   return <div className="w-full select-none">
@@ -167,13 +162,23 @@ function DatePicker(props: Props) {
         key={d.toString()}
         /* @ts-ignore */
         value={d.toString()}
-        onTouchStart={() => !isReadonly && setTouchStart(d)}
-        onMouseDown={() => !isReadonly && setTouchStart(d)}
+        onTouchStart={() => {
+          if (!isReadonly) {
+            setTouchStart(d);
+            setTouchEnd(d);
+          }
+        }}
+        onMouseDown={() => {
+          if (!isReadonly) {
+            setTouchStart(d);
+            setTouchEnd(d);
+          }
+        }}
         onTouchMove={handleTouchMove}
         onMouseMove={handleMove}
         onTouchEnd={handleTouchEnd}
         onMouseUp={handleTouchEnd}
-        className={cx('border-2 rounded-full w-10 h-10 ',
+        className={cx('border-2 rounded-full w-10 h-10 cursor-pointer',
           'flex items-center justify-center m-2 select-none',
           'touch-none',
           getColor(d))}>
