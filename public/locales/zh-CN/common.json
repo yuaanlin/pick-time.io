@@ -53,5 +53,6 @@
   "create_new_event_label": "建立新活动",
   "create_event_date_input_error": "请至少选择一个日期。",
   "create_event_time_input_error": "请至少选择一个时间。",
-  "invalid_password": "这个名字已被使用，如果是你使用的，请输入正确的密码"
+  "username_missing": "请输入你的名称。",
+  "invalid_password": "这个名称已被使用，如果是你使用的，请输入正确的密码"
 }

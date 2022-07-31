@@ -22,6 +22,8 @@ function signIn(props: Props) {
   const updateSession = useUpdateSession();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [isMissingName, setIsMissingName] = useState(false);
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +31,10 @@ function signIn(props: Props) {
   }, []);
 
   async function submit() {
-    if (!name) return;
+    if (!name) {
+      setIsMissingName(true);
+      return;
+    }
     const res = await fetch(`/api/events/${eventData.nanoid}/signIn`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -46,7 +51,7 @@ function signIn(props: Props) {
     }
     switch (data.error) {
       case ErrorCode.INVALID_PASSWORD:
-        alert(t('invalid_password'));
+        setIsPasswordInvalid(true);
     }
   }
 
@@ -60,9 +65,15 @@ function signIn(props: Props) {
           <p className="text-2xl mb-4">{t('username_label')}</p>
           <input
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={e => {
+              setName(e.target.value);
+              e.target.value.length > 0 && setIsMissingName(false);
+            }}
             className="border rounded-xl border-black text-lg px-2 py-1"
           />
+          {isMissingName && <p className="text-amber-500">
+            {t('username_missing')}
+          </p>}
         </div>
         <div className="mt-8">
           <p className="text-2xl mb-2">{t('password_label')}</p>
@@ -73,6 +84,9 @@ function signIn(props: Props) {
             onChange={e => setPassword(e.target.value)}
             className="border rounded-xl border-black text-lg px-2 py-1"
           />
+          {isPasswordInvalid && <p className="text-amber-500">
+            {t('invalid_password')}
+          </p>}
         </div>
         <button
           className="fixed bottom-8 right-8 bg-zinc-300 items-center
