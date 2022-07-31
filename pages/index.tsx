@@ -11,6 +11,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import NProgress from 'nprogress';
+import cx from 'classnames';
 import type { NextPage } from 'next';
 
 const Home: NextPage = () => {
@@ -23,12 +24,36 @@ const Home: NextPage = () => {
   const [selectedDate, setSelectedDate] = useState<DateValue[]>([]);
   const [isCreating, setIsCreating] = useState(false);
 
+  const [isMissingTitle, setIsMissingTitle] = useState(false);
+  const [isMissingDate, setIsMissingDate] = useState(false);
+  const [isMissingTime, setIsMissingTime] = useState(false);
+
   async function submit() {
+
+    if (!title) {
+      document.getElementById('title-input')
+        ?.scrollIntoView({ behavior: 'smooth' });
+      setIsMissingTitle(true);
+      return;
+    }
+
+    if (selectedDate.length === 0) {
+      document.getElementById('date-input')
+        ?.scrollIntoView({ behavior: 'smooth' });
+      setIsMissingDate(true);
+      return;
+    }
+
+    if (selectedTime.length === 0) {
+      document.getElementById('time-input')
+        ?.scrollIntoView({ behavior: 'smooth' });
+      setIsMissingTime(true);
+      return;
+    }
+
     setIsCreating(true);
     NProgress.start();
     try {
-      if (!title || selectedTime.length === 0 || selectedDate.length === 0)
-        return;
       const res = await fetch('/api/event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,29 +79,57 @@ const Home: NextPage = () => {
       <TopNav/>
       <PageContainer>
         <div className="mt-8">
-          <p className="text-2xl mb-4 font-bold">
+          <p
+            className="text-2xl mb-4 font-bold"
+            id="title-input">
             {t('create_event_name_input_label')}
           </p>
           <input
             value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="border rounded-xl border-black text-lg px-2 py-1"
+            onChange={e => {
+              setTitle(e.target.value);
+              e.target.value.length > 0 && setIsMissingTitle(false);
+            }}
+            className={cx('rounded-xl text-lg px-2 py-1',
+              isMissingTitle
+                ? 'border-amber-500 border-4'
+                : 'border border-black')}
           />
         </div>
 
-        <div className="mt-16 ">
-          <p className="text-2xl mb-12 font-bold">
-            {t('create_event_date_input_label')}
-          </p>
-          <DatePicker value={selectedDate} onChange={setSelectedDate}/>
+        <div className="mt-16" id="date-input">
+          <div className="mb-12">
+            <p className="text-2xl font-bold">
+              {t('create_event_date_input_label')}
+            </p>
+            {isMissingDate && <p className="text-amber-500">
+              {t('create_event_date_input_error')}
+            </p>}
+          </div>
+          <DatePicker
+            value={selectedDate}
+            onChange={v => {
+              setSelectedDate(v);
+              v.length > 0 && setIsMissingDate(false);
+            }}/>
         </div>
 
-        <div className="mt-16">
-          <p className="text-2xl mb-12 font-bold">
-            {t('create_event_time_input_label')}
-          </p>
+        <div className="mt-16" id="time-input">
+          <div className="mb-12">
+            <p className="text-2xl font-bold">
+              {t('create_event_time_input_label')}
+            </p>
+            {isMissingTime && <p className="text-amber-500">
+              {t('create_event_time_input_error')}
+            </p>}
+          </div>
         </div>
-        <TwoColumnTimePicker value={selectedTime} onChange={setSelectedTime}/>
+        <TwoColumnTimePicker
+          value={selectedTime}
+          onChange={v => {
+            setSelectedTime(v);
+            v.length > 0 && setIsMissingTime(false);
+          }}/>
         <button
           disabled={isCreating}
           onClick={submit}

@@ -50,5 +50,7 @@
   "result_description": "你可以参加活动的时段已经顺利提交了。",
   "available_member_ratio_label": "位成员可以参加",
   "event_not_found_label": "这个活动可能已经过期或被删除了！",
-  "create_new_event_label": "建立新活动"
+  "create_new_event_label": "建立新活动",
+  "create_event_date_input_error": "请至少选择一个日期。",
+  "create_event_time_input_error": "请至少选择一个时间。"
 }
