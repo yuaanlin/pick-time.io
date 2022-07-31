@@ -35,7 +35,7 @@ function signIn(props: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        password
+        password,
       }),
     });
     const data = await res.json();
@@ -52,15 +52,14 @@ function signIn(props: Props) {
 
   return (
     <div>
-      <PageHead
-        title={t('event_page_title', { eventTitle: event.title })}/>
+      <PageHead title={t('event_page_title', { eventTitle: event.title })} />
       <PageContainer>
-        <TopNav/>
+        <TopNav />
         <div className="mt-12">
           <p className="text-2xl mb-4">{t('username_label')}</p>
           <input
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             className="border rounded-xl border-black text-lg px-2 py-1"
           />
         </div>
@@ -68,20 +67,22 @@ function signIn(props: Props) {
           <p className="text-2xl mb-2">{t('password_label')}</p>
           <p className="mb-4 opacity-40">{t('password_description_label')}</p>
           <input
+            type="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             className="border rounded-xl border-black text-lg px-2 py-1"
           />
         </div>
         <button
           className="fixed bottom-8 right-8 bg-zinc-300 items-center
         px-4 py-2 rounded-lg flex z-50 shadow-lg"
-          onClick={submit}>
+          onClick={submit}
+        >
           <p>{t('schedule_now')}</p>
-          <img src="/arrow.svg" alt="" className="ml-4 h-3"/>
+          <img src="/arrow.svg" alt="" className="ml-4 h-3" />
         </button>
       </PageContainer>
-      <Footer/>
+      <Footer />
     </div>
   );
 }
@@ -90,7 +91,7 @@ export default signIn;
 
 export const getStaticPaths = () => ({
   paths: [],
-  fallback: 'blocking'
+  fallback: 'blocking',
 });
 
 export const getStaticProps = getEventProps;
