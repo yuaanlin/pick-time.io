@@ -68,6 +68,7 @@ function signIn(props: Props) {
           <p className="text-2xl mb-2">{t('password_label')}</p>
           <p className="mb-4 opacity-40">{t('password_description_label')}</p>
           <input
+            type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             className="border rounded-xl border-black text-lg px-2 py-1"
