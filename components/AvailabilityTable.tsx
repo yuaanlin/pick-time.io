@@ -70,17 +70,27 @@ function AvailabilityTable(props: Props) {
   }, [touchStart, touchEnd]);
 
   function getColor(dtr: DateTimeRange) {
-    if (isReadonly) {
+    if (isReadonly && result && result.length > 0) {
       let count = 0;
       result?.forEach(pick => {
         if (pick.picks.find(v => v.equals(dtr))) {
           count++;
         }
       });
-      return {
-        backgroundColor: `rgba(255, 193, 7, ${
-          count / (result?.length || 1)})`
-      };
+      const colors = [
+        '#FFFFFF',
+        '#FFF5E6',
+        '#FFEBCC',
+        '#FFE0B3',
+        '#FFD699',
+        '#FFCC80',
+        '#FFC266',
+        '#FFB84D',
+        '#FFAD33',
+        '#FF9900',
+      ];
+      const i = Math.round(count * 10 / result.length);
+      return { backgroundColor: colors[i <= 9 ? i : 9], };
     }
     if (touchStart && dtr.equals(touchStart)) {
       return value?.find(v => v.equals(touchStart))
