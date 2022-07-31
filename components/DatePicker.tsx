@@ -141,7 +141,8 @@ function DatePicker(props: Props) {
           className="select-none cursor-pointer"
         >{'<'}</p>}
       <p className="text-center flex-grow">
-        {currMonth} {currYear}
+        {t('date_month_' +
+          DateValue(currYear, currMonth).getMonthCode())} {currYear}
       </p>
       {(!isReadonly || value?.find(v => v.laterThan(DateValue(currYear,
         currMonth, 1).addMonth(1)))) &&
