@@ -53,5 +53,6 @@
   "create_new_event_label": "Create a new event",
   "create_event_date_input_error": "Please select at least one date.",
   "create_event_time_input_error": "Please select at least one time range.",
+  "username_missing": "Please enter your name.",
   "invalid_password": "The username has been used by another user. Or you have entered an invalid password."
 }
