@@ -52,5 +52,6 @@
   "event_not_found_label": "這個活動可能已經過期或被刪除了！",
   "create_new_event_label": "建立新活動",
   "create_event_date_input_error": "請至少選擇一個日期。",
-  "create_event_time_input_error": "請至少選擇一個時間。"
+  "create_event_time_input_error": "請至少選擇一個時間。",
+  "invalid_password": "這個名字已被使用，如果是你使用的，請輸入正確的密碼。"
 }

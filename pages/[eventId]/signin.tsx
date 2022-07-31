@@ -8,6 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getEventProps } from '@services/getEventProps';
+import { ErrorCode } from '@models/errors';
 
 interface Props {
   event: SerializedEventData;
@@ -38,8 +39,15 @@ function signIn(props: Props) {
       }),
     });
     const data = await res.json();
-    updateSession(eventData.nanoid, data.name, data.token);
-    await router.push(`/${eventData.nanoid}/pick`);
+    if (res.status === 200 || res.status === 201) {
+      updateSession(eventData.nanoid, data.name, data.token);
+      await router.push(`/${eventData.nanoid}/pick`);
+      return;
+    }
+    switch (data.error) {
+      case ErrorCode.INVALID_PASSWORD:
+        alert(t('invalid_password'));
+    }
   }
 
   return (

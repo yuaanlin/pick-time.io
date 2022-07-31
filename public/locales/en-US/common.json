@@ -52,5 +52,6 @@
   "event_not_found_label": "The event you are looking for is not found or expired.",
   "create_new_event_label": "Create a new event",
   "create_event_date_input_error": "Please select at least one date.",
-  "create_event_time_input_error": "Please select at least one time range."
+  "create_event_time_input_error": "Please select at least one time range.",
+  "invalid_password": "The username has been used by another user. Or you have entered an invalid password."
 }

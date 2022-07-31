@@ -3,6 +3,7 @@ import { TimeRange } from '@models/time';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { customAlphabet } from 'nanoid';
 import RedisClient from '@utils/getRedis';
+import { ErrorCode } from '@models/errors';
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -10,7 +11,7 @@ const handler: NextApiHandler = (req, res) => {
       return handleCreateEvent(req, res);
     default:
       res.setHeader('Allow', ['POST']);
-      res.status(405).json({ error: 'ERROR_METHOD_NOT_ALLOWED' });
+      res.status(405).json({ error: ErrorCode.METHOD_NOT_ALLOWED });
   }
 };
 
@@ -19,7 +20,7 @@ async function handleCreateEvent(req: NextApiRequest, res: NextApiResponse) {
     const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6);
     const title: string = req.body.title;
     if (!title) {
-      res.status(400).json({ error: 'Title is required' });
+      res.status(400).json({ error: ErrorCode.INVALID_REQUEST });
       return;
     }
 
@@ -29,7 +30,7 @@ async function handleCreateEvent(req: NextApiRequest, res: NextApiResponse) {
     const availableDate = d.map((date) => DateValue().fromString(date));
     const availableTime = t.map((time) => TimeRange().fromString(time));
     if (availableTime.length === 0 || availableDate.length === 0) {
-      res.status(400).json({ error: 'Invalid request' });
+      res.status(400).json({ error: ErrorCode.INVALID_REQUEST });
       return;
     }
     const redis = new RedisClient();
@@ -43,7 +44,7 @@ async function handleCreateEvent(req: NextApiRequest, res: NextApiResponse) {
     res.status(201).json(insert);
   } catch (err) {
     console.error(err);
-    res.status(400).json({ error: 'Invalid request' });
+    res.status(400).json({ error: ErrorCode.INVALID_REQUEST });
   }
 }
 

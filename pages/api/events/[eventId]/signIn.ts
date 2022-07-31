@@ -2,6 +2,7 @@ import { NextApiHandler } from 'next';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import RedisClient from '@utils/getRedis';
+import { ErrorCode } from '@models/errors';
 
 const signIn: NextApiHandler = async (req, res) => {
   const {
@@ -10,13 +11,13 @@ const signIn: NextApiHandler = async (req, res) => {
   } = req.body;
 
   if (!process.env.JWT_SECRET) {
-    res.status(500).json({ error: 'JWT_SECRET is not set' });
+    res.status(500).json({ error: ErrorCode.INTERNAL_ERROR });
     return;
   }
 
   const { eventId } = req.query;
   if (!eventId || typeof eventId !== 'string') {
-    res.status(404).json({ error: 'NOT_FOUND' });
+    res.status(404).json({ error: ErrorCode.EVENT_NOT_FOUND });
     return;
   }
 
@@ -46,7 +47,7 @@ const signIn: NextApiHandler = async (req, res) => {
   if (find.passwordHash) {
     const isValid = bcrypt.compareSync(password, find.passwordHash);
     if (!isValid) {
-      res.status(400).json({ error: 'Invalid password' });
+      res.status(400).json({ error: ErrorCode.INVALID_PASSWORD });
       return;
     }
   }

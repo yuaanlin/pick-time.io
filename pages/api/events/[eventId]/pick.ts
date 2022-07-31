@@ -2,6 +2,7 @@ import { DateTimeRange } from '@models/DateTimeRange';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import jsonwebtoken from 'jsonwebtoken';
 import RedisClient from '@utils/getRedis';
+import { ErrorCode } from '@models/errors';
 
 const pick: NextApiHandler = async (req, res) => {
   switch (req.method) {
@@ -50,7 +51,7 @@ async function handleCreatePick(req: NextApiRequest, res: NextApiResponse) {
 
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
-    res.status(401).json({ error: 'ERROR_NOT_LOGGED_IN' });
+    res.status(401).json({ error: ErrorCode.UNAUTHORIZED });
     return;
   }
 
@@ -58,25 +59,25 @@ async function handleCreatePick(req: NextApiRequest, res: NextApiResponse) {
     process.env.JWT_SECRET) as unknown as { sub: string, eventId: string };
 
   if (!parsedToken) {
-    res.status(401).json({ error: 'ERROR_NOT_LOGGED_IN' });
+    res.status(401).json({ error: ErrorCode.UNAUTHORIZED });
     return;
   }
 
   if (parsedToken.eventId !== req.query.eventId) {
-    res.status(401).json({ error: 'ERROR_NOT_LOGGED_IN' });
+    res.status(401).json({ error: ErrorCode.UNAUTHORIZED });
     return;
   }
 
   const redis = new RedisClient();
   const findEvent = await redis.getEvent(eventId);
   if (!findEvent) {
-    res.status(404).json({ error: 'ERROR_EVENT_NOT_FOUND' });
+    res.status(404).json({ error: ErrorCode.EVENT_NOT_FOUND });
     return;
   }
 
   const findUser = await redis.getUser(eventId, parsedToken.sub);
   if (!findUser) {
-    res.status(404).json({ error: 'ERROR_USER_NOT_FOUND' });
+    res.status(401).json({ error: ErrorCode.UNAUTHORIZED });
     return;
   }
 
