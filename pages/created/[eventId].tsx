@@ -4,7 +4,6 @@ import PageContainer from '@components/PageContainer';
 import Footer from '@components/Footer';
 import TopNav from '@components/TopNav';
 import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import DatePicker from '@components/DatePicker';
 import TwoColumnTimePicker from '@components/TwoColumnTimePicker';
@@ -30,17 +29,21 @@ export default function (props: Props) {
         <div
           className="flex items-center border-2 mt-4 mb-2
            border-black rounded-xl px-2 py-1">
-          <Link href="/[eventId]" passHref as={'/' + event.nanoid}>
-            <a className="flex-grow pr-4">
-              <input
-                id="event-link"
-                readOnly
-                className="w-full"
-                value={'https://pick-time.io/' + (router.locale === 'en-US'
-                  ? ''
-                  : (router.locale + '/')) + event.nanoid}/>
-            </a>
-          </Link>
+          <a
+            className="flex-grow pr-4"
+            href={'https://pick-time.io/' + (router.locale === 'en-US'
+              ? '' : (router.locale + '/')) + event.nanoid}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <input
+              id="event-link"
+              readOnly
+              className="w-full"
+              value={'https://pick-time.io/' + (router.locale === 'en-US'
+                ? '' : (router.locale + '/')) + event.nanoid}
+            />
+          </a>
           <div
             className="border-l-2 border-black px-4"
             onClick={() => {
