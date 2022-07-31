@@ -2,6 +2,7 @@ import { DateTimeRange } from '@models/DateTimeRange';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 interface Props {
   timeRange: DateTimeRange | undefined;
@@ -18,6 +19,7 @@ function AvailableTimeModal(props: Props) {
 
   const [isShowing, setIsShowing] = useState(false);
   const { t } = useTranslation();
+  const router = useRouter();
 
   useEffect(() => {
     if (timeRange) setTimeout(() => setIsShowing(true), 100);
@@ -41,18 +43,17 @@ function AvailableTimeModal(props: Props) {
     <div
       className={cx('bg-white w-screen fixed touch-none z-50',
         'bottom-0 left-0 rounded-t-2xl transition-all duration-300',
-        'shadow-xl pt-8 pb-16',
+        'shadow-xl pt-8 pb-16 min-h-[40vh]',
         (!isShowing || !props.timeRange) && '-bottom-[100vh]')}>
       {timeRange && <div className="max-w-md mx-auto">
         <p className="text-2xl text-center">
           {timeRange.timeRange.toString()}
         </p>
         <p className="text-center">
-          {t('date_month_' + timeRange.date.getMonthCode()) + ' '}
-          {timeRange.date.date + ' '}
-          {t('date_day_' + timeRange.date.getDayCode())}
+          {new Intl.DateTimeFormat(router.locale, { dateStyle: 'full' }).format(
+            new Date(timeRange.toDate()))}
         </p>
-        <p className="text-center opacity-30 my-6">
+        <p className="text-center text-white my-6 bg-black py-1">
           {availablePicks.length}/{result?.length}
           {' ' + t('available_member_ratio_label')}
         </p>

@@ -14,6 +14,7 @@ export interface DateTimeRange {
   equals: (other: DateTimeRange) => boolean;
   earlierThan: (other: DateTimeRange) => boolean;
   laterThan: (other: DateTimeRange) => boolean;
+  toDate: () => Date;
 }
 
 export function DateTimeRange(date?: DateValue,
@@ -42,6 +43,9 @@ export function DateTimeRange(date?: DateValue,
       return this.date.laterThan(other.date) ||
         (this.date.equals(other.date) &&
           this.timeRange.laterThan(other.timeRange));
+    },
+    toDate() {
+      return new Date(this.date.year, this.date.month - 1, this.date.date);
     }
   };
 }
