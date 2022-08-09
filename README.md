@@ -19,7 +19,7 @@
   </a>
 
  <p align="center">
-  <h3>📝 Schedule your time in at instant.</h3>
+  <h3>📝 Schedule your time in an instant.</h3>
     <a href="https://pick-time.io">Try now</a>
     ·
     <a href="#bug">Report bug</a>
