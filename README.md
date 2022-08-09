@@ -252,5 +252,5 @@
 [stars-url]: https://github.com/yuaanlin/pick-time.io/stargazers
 [issues-shield]: https://img.shields.io/github/issues/yuaanlin/pick-time.io.svg?style=for-the-badge
 [issues-url]: https://github.com/yuaanlin/pick-time.io/issues
-[license-shield]: https://img.shields.io/github/license/yuaanlin/pick-time.io.svg?style=for-the-badge
-[license-url]: https://github.com/yuaanlin/pick-time.io/blob/master/LICENSE
+[license-shield]: https://img.shields.io/github/license/yuaanlin/pick-time.io?label=license&style=for-the-badge
+[license-url]: https://github.com/yuaanlin/pick-time.io/blob/main/LICENSE
