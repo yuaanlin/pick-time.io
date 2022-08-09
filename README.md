@@ -35,11 +35,7 @@
   <summary>Overview</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-        <li><a href="#using">Using</a></li>
-      </ul>
+      <a href="#about">About The Project</a>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
@@ -49,8 +45,8 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#architecture-design-&-explanation">Architecture Design & Explanation</a></li>
-    <li><a href="#a-little-more-detail">A Little More Detail</a></li>
+    <li><a href="#bug">Report a bug</a></li>
+    <li><a href="#pr">Contributing to Picktime</a></li>
     <li><a href="#license">License</a></li>
     
   </ol>
@@ -61,6 +57,7 @@
 <!-- ABOUT THE PROJECT -->
 <div align='left'>
 
+<a id="about"></a>
 ## 📌 About The Project
 
 ![Imgur](https://imgur.com/40pUwTq.png)
@@ -75,6 +72,8 @@
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+
+<a id="getting-started"></a>
 ## 📌 Getting Started
 
 > This is how you set up your project locally. To use picktime online, please visit [here](https://www.pick-time.io).
@@ -118,7 +117,7 @@
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
-
+<a id="usage"></a>
 ## 📌 Usage
 - ### Event creater
   -  Simply create your event by entering the title, possible dates and time.
@@ -232,7 +231,7 @@
 
 
   <!-- LICENSE-->
-
+<a id="license"></a>
 ## 📌 License
 
 - ### Picktime is distributed under the MIT License. See `LICENSE` for more information.
