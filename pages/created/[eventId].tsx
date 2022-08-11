@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import DatePicker from '@components/DatePicker';
 import TwoColumnTimePicker from '@components/TwoColumnTimePicker';
 import { getEventProps } from '@services/getEventProps';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Props {
   event: SerializedEventData;
@@ -18,10 +19,17 @@ export default function (props: Props) {
   const { t } = useTranslation();
   const eventData = parseEventData(event);
   const router = useRouter();
+  const copyToast = () =>
+    toast(t('copy_successful'), {
+      duration: 4000,
+      position: 'top-center',
+      icon: '✅',
+    });
   return <div>
     <PageHead/>
     <PageContainer>
       <TopNav/>
+      <Toaster/>
       <p className="text-2xl">
         {t('created_title')}
       </p>
@@ -51,6 +59,7 @@ export default function (props: Props) {
                 'event-link') as HTMLInputElement;
               copyText.select();
               document.execCommand('copy');
+              copyToast();
             }}>
             <img src="/link.svg" alt=""/>
           </div>
