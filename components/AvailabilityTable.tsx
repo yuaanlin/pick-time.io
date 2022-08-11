@@ -222,6 +222,7 @@ function AvailabilityTable(props: Props) {
                     onTouchEnd={(e) => {
                       handleTouchEnd();
                       e.preventDefault();
+                      if (isReadonly) setSelectedTimeRange(dtr);
                     }}
                     onMouseUp={(e) => {
                       e.preventDefault();
