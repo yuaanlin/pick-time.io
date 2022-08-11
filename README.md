@@ -138,7 +138,7 @@
 <a id="bug"></a>
  ## [📌 Report a bug](https://github.com/yuaanlin/pick-time.io/issues)
 
-- ### Please followw the below guidelines if you would like to report a bug:
+- ### Please follow the below guidelines if you would like to report a bug:
 
   1. **Use the GitHub issue search** &mdash; check if the issue has already been
      reported.
