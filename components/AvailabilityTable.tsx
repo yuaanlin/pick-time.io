@@ -6,6 +6,7 @@ import { TouchEvent, useMemo, useRef, useState } from 'react';
 import cx from 'classnames';
 import { TimeRange } from '@models/time';
 import AvailableTimeModal from '@components/AvailableTimeModal';
+import isMobile from '@utils/isMobile';
 
 interface Props {
   event: EventData;
@@ -219,13 +220,16 @@ function AvailabilityTable(props: Props) {
                     }}
                     onTouchMove={handleTouchMove}
                     onMouseMove={handleMove}
-                    onTouchEnd={(e) => {
+                    onTouchEnd={() => {
+                      setTouchStart(undefined);
+                      setTouchEnd(undefined);
+                      if (!isMobile()) return;
                       handleTouchEnd();
-                      e.preventDefault();
-                      if (isReadonly) setSelectedTimeRange(dtr);
                     }}
-                    onMouseUp={(e) => {
-                      e.preventDefault();
+                    onMouseUp={() => {
+                      setTouchStart(undefined);
+                      setTouchEnd(undefined);
+                      if (isMobile()) return;
                       handleTouchEnd();
                     }}
                     style={getColor(dtr)}
