@@ -7,6 +7,7 @@ import {
 import { TouchEventHandler, useRef, useState } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'next-i18next';
+import getTodayInTimezone from '@utils/getToday';
 
 interface Props {
   value?: DateValue[];
@@ -34,8 +35,7 @@ function DatePicker(props: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currYear, setCurrYear] = useState(new Date().getFullYear());
   const [currMonth, setCurrMonth] = useState(new Date().getMonth() + 1);
-  const today = DateValue(new Date().getFullYear(), new Date().getMonth() + 1,
-    new Date().getDate());
+  const today = getTodayInTimezone(8);
 
   const [touchStart, setTouchStart] = useState<DateValue>();
   const [touchEnd, setTouchEnd] = useState<DateValue>();
