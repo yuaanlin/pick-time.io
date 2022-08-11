@@ -21,7 +21,7 @@ export default function (props: Props) {
   const router = useRouter();
   const copyToast = () =>
     toast(t('copy_successful'), {
-      duration: 4000,
+      duration: 1500,
       position: 'top-center',
       icon: '✅',
     });
@@ -53,7 +53,7 @@ export default function (props: Props) {
             />
           </a>
           <div
-            className="border-l-2 border-black px-4"
+            className="border-l-2 border-black px-4 cursor-pointer"
             onClick={() => {
               const copyText = document.getElementById(
                 'event-link') as HTMLInputElement;
