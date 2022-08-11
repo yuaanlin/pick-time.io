@@ -45,6 +45,7 @@ function AvailabilityTable(props: Props) {
 
   const valueBetweenTouch = useMemo(() => {
     if (isReadonly || !touchStart || !touchEnd) return [];
+    if (touchStart.equals(touchEnd)) return [touchStart];
     return options.filter(dtr => {
       const dtrTime = dtr.timeRange.start;
       const touchStartTime = touchStart.timeRange.start;
@@ -111,7 +112,7 @@ function AvailabilityTable(props: Props) {
   };
 
   const handleMove = (touch: { clientX: number, clientY: number }) => {
-    if (isReadonly) return;
+    if (isReadonly || !touchStart) return;
     const containerRight = containerRef.current?.getBoundingClientRect().right;
     const containerLeft = containerRef.current?.getBoundingClientRect().left;
     const containerScrollLeft = containerRef.current?.scrollLeft;
@@ -211,12 +212,21 @@ function AvailabilityTable(props: Props) {
                       }
                     }}
                     onMouseDown={() => {
-                      !isReadonly && setTouchStart(dtr);
+                      if (!isReadonly) {
+                        setTouchStart(dtr);
+                        setTouchEnd(dtr);
+                      }
                     }}
                     onTouchMove={handleTouchMove}
                     onMouseMove={handleMove}
-                    onTouchEnd={handleTouchEnd}
-                    onMouseUp={handleTouchEnd}
+                    onTouchEnd={(e) => {
+                      handleTouchEnd();
+                      e.preventDefault();
+                    }}
+                    onMouseUp={(e) => {
+                      e.preventDefault();
+                      handleTouchEnd();
+                    }}
                     style={getColor(dtr)}
                     className={cx('date-time-range-option',
                       'flex-1 border-b border-black border-opacity-30 w-24',
