@@ -50,7 +50,7 @@ class RedisClient {
   }
 
   public async getPicks(nanoid: string): Promise<SerializedEventResult[] | null> {
-    return JSON.parse(await this._redis.get(`events:${nanoid}:picks`) || '{}');
+    return JSON.parse(await this._redis.get(`events:${nanoid}:picks`) || '[]');
   }
 }
 
