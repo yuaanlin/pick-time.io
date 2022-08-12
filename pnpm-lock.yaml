@@ -25,6 +25,7 @@ specifiers:
   postcss: ^8.4.14
   react: 18.2.0
   react-dom: 18.2.0
+  react-hot-toast: ^2.3.0
   tailwindcss: ^3.1.5
   typescript: 4.7.4
 
@@ -42,6 +43,7 @@ dependencies:
   nprogress: 0.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-hot-toast: 2.3.0_biqbaboplfbrettd7655fr4n2y
 
 devDependencies:
   '@types/node': 18.0.3
@@ -1490,6 +1492,12 @@ packages:
       slash: 3.0.0
     dev: true
 
+  /goober/2.1.10:
+    resolution: {integrity: sha512-7PpuQMH10jaTWm33sQgBQvz45pHR8N4l3Cu3WMGEWmHShAcTuuP7I+5/DwKo39fwti5A80WAjvqgz6SSlgWmGA==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dev: false
+
   /has-bigints/1.0.2:
     resolution: {integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==}
     dev: true
@@ -2302,6 +2310,20 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-hot-toast/2.3.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-/RxV+bfjld7tSJR1SCLzMAXgFuNW7fCpK6+vbYqfmbGSWcqTMz2rizrvfWKvtcPH5HK0NqxmBaC5SrAy1F42zA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      goober: 2.1.10
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    transitivePeerDependencies:
+      - csstype
     dev: false
 
   /react-i18next/11.18.1_76fbphthii3jxinh3ka5k7ds7q:
