@@ -1,50 +1,56 @@
 import { Redis } from '@upstash/redis';
+import IoRedis from 'ioredis';
 import { SerializedEventData } from '@models/event';
 import { SerializedEventResult } from '@models/Pick';
 
 class RedisClient {
-  private _redis: Redis;
+  private _redis: Redis | IoRedis;
 
   constructor() {
     const {
       UPSTASH_REDIS_REST_URL,
-      UPSTASH_REDIS_REST_TOKEN
+      UPSTASH_REDIS_REST_TOKEN,
+      USE_IOREDIS
     } = process.env;
-    if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) throw new Error(
-      'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set');
-    this._redis = new Redis({
-      url: UPSTASH_REDIS_REST_URL,
-      token: UPSTASH_REDIS_REST_TOKEN,
-    });
+    if (USE_IOREDIS) {
+      this._redis = new IoRedis();
+    } else {
+      if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) throw new Error(
+        'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set');
+      this._redis = new Redis({
+        url: UPSTASH_REDIS_REST_URL,
+        token: UPSTASH_REDIS_REST_TOKEN,
+      });
+    }
   }
 
-  public setEvent(data: SerializedEventData) {
-    return this._redis.set(`event:${data.nanoid}`, data);
+  public async setEvent(data: SerializedEventData) {
+    return await this._redis.set(`event:${data.nanoid}`, JSON.stringify(data));
   }
 
-  public getEvent(nanoid: string) {
-    return this._redis.get(`event:${nanoid}`) as unknown as SerializedEventData;
+  public async getEvent(nanoid: string) {
+    return JSON.parse(await this._redis.get(`event:${nanoid}`) || '{}') as unknown as SerializedEventData;
   }
 
-  public setUser(nanoid: string, name: string, passwordHash?: string) {
-    return this._redis.set(`event:${nanoid}:user:${name}`, {
+  public async setUser(nanoid: string, name: string, passwordHash?: string) {
+    return await this._redis.set(`event:${nanoid}:user:${name}`, JSON.stringify({
       name,
       passwordHash,
-    });
+    }));
   }
 
-  public getUser(nanoid: string, name: string): Promise<{
+  public async getUser(nanoid: string, name: string): Promise<{
     name: string; passwordHash?: string;
   } | null> {
-    return this._redis.get(`event:${nanoid}:user:${name}`);
+    return JSON.parse(await this._redis.get(`event:${nanoid}:user:${name}`) || '{}');
   }
 
-  public setPicks(nanoid: string, picks: SerializedEventResult[]) {
-    return this._redis.set(`events:${nanoid}:picks`, picks);
+  public async setPicks(nanoid: string, picks: SerializedEventResult[]) {
+    return await this._redis.set(`events:${nanoid}:picks`, JSON.stringify(picks));
   }
 
-  public getPicks(nanoid: string): Promise<SerializedEventResult[] | null> {
-    return this._redis.get(`events:${nanoid}:picks`);
+  public async getPicks(nanoid: string): Promise<SerializedEventResult[] | null> {
+    return JSON.parse(await this._redis.get(`events:${nanoid}:picks`) || '[]');
   }
 }
 
